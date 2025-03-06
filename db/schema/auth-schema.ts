@@ -18,10 +18,10 @@ export const user = pgTable("user", {
 export const businessInfo = pgTable("business_info", {
     id: uuid("id").primaryKey().defaultRandom(),
     companyName: text("company_name").notNull(),
-    businessType: text("business_type").notNull(),
+    businessDescription: text("business_description"),
     registrationNumber: text("registration_number"),
     phone: text("phone").notNull(),
-    website: text("website"),
+    website: text("website"),   
     isVerified: boolean("is_verified").notNull().default(false),
     verificationDate: timestamp("verification_date"),
     createdAt: timestamp("created_at").notNull().defaultNow(),

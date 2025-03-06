@@ -1,0 +1,1 @@
+ALTER TABLE "business_info" RENAME COLUMN "business_type" TO "business_description";
