@@ -1,22 +1,16 @@
-import {
-    boolean,
-    pgEnum,
-    pgTable,
-    text,
-    timestamp,
-    uuid,
-} from "drizzle-orm/pg-core";
-
-export const rolesEnum = pgEnum("roles", ["user", "artisan", "admin"]);
+import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
     id: text("id").primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     emailVerified: boolean("email_verified").notNull(),
-    role: rolesEnum("role").default("user"),
+    role: text("role"),
     image: text("image"),
     bio: text("bio"),
+    banned: boolean("banned"),
+    banReason: text("ban_reason"),
+    banExpires: timestamp("ban_expires"),
     businessInfoId: uuid("business_info_id").references(() => businessInfo.id),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -45,7 +39,8 @@ export const session = pgTable("session", {
     userAgent: text("user_agent"),
     userId: text("user_id")
         .notNull()
-        .references(() => user.id),
+        .references(() => user.id, { onDelete: "cascade" }),
+    impersonatedBy: text("impersonated_by"),
 });
 
 export const account = pgTable("account", {
@@ -54,7 +49,7 @@ export const account = pgTable("account", {
     providerId: text("provider_id").notNull(),
     userId: text("user_id")
         .notNull()
-        .references(() => user.id),
+        .references(() => user.id, { onDelete: "cascade" }),
     accessToken: text("access_token"),
     refreshToken: text("refresh_token"),
     idToken: text("id_token"),
