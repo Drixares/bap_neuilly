@@ -1,4 +1,11 @@
-import { boolean, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+    boolean,
+    pgEnum,
+    pgTable,
+    text,
+    timestamp,
+    uuid,
+} from "drizzle-orm/pg-core";
 
 export const rolesEnum = pgEnum("roles", ["user", "artisan", "admin"]);
 
@@ -21,7 +28,7 @@ export const businessInfo = pgTable("business_info", {
     businessDescription: text("business_description"),
     registrationNumber: text("registration_number"),
     phone: text("phone").notNull(),
-    website: text("website"),   
+    website: text("website"),
     isVerified: boolean("is_verified").notNull().default(false),
     verificationDate: timestamp("verification_date"),
     createdAt: timestamp("created_at").notNull().defaultNow(),

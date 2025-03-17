@@ -1,20 +1,14 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-    title: "Experiment 01 - Crafted.is",
-};
-
 import ContactsTable from "@/components/contacts-table";
 import { StatsGrid } from "@/components/stats-grid";
 import { Button } from "@/components/ui/button";
 import {
-    RiFileTextLine,
-    RiQuestionnaireFill,
-    RiUser3Fill,
-    RiUserFollowFill,
+  RiFileTextLine,
+  RiQuestionnaireFill,
+  RiUser3Fill,
+  RiUserFollowFill,
 } from "@remixicon/react";
 
-export default function AdminPage() {
+export default function AdminDemandesPage() {
     return (
         <>
             {/* Page intro */}
