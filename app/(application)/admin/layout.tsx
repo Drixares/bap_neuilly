@@ -1,16 +1,7 @@
-import { RiScanLine } from "@remixicon/react";
-
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 
 import { AppSidebar } from "@/components/app-sidebar";
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import BreadcrumbComponent from "@/components/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import UserDropdown from "@/components/user-dropdown";
@@ -31,27 +22,7 @@ export default function AdminLayout({
                             orientation="vertical"
                             className="mr-2 data-[orientation=vertical]:h-4"
                         />
-                        <Breadcrumb>
-                            <BreadcrumbList>
-                                <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="#">
-                                        <RiScanLine
-                                            size={22}
-                                            aria-hidden="true"
-                                        />
-                                        <span className="sr-only">
-                                            Tableau de bord
-                                        </span>
-                                    </BreadcrumbLink>
-                                </BreadcrumbItem>
-                                <BreadcrumbSeparator className="hidden md:block" />
-                                <BreadcrumbItem>
-                                    <BreadcrumbPage>
-                                        Tableau de bord
-                                    </BreadcrumbPage>
-                                </BreadcrumbItem>
-                            </BreadcrumbList>
-                        </Breadcrumb>
+                        <BreadcrumbComponent />
                     </div>
                     <div className="flex gap-3 ml-auto">
                         {/* <FeedbackDialog /> */}

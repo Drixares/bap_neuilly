@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Experiment 01 - Crafted.is",
+    title: "Made In Neuilly - Administration",
 };
 
 import ContactsTable from "@/components/contacts-table";

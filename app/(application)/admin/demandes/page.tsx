@@ -2,10 +2,10 @@ import ContactsTable from "@/components/contacts-table";
 import { StatsGrid } from "@/components/stats-grid";
 import { Button } from "@/components/ui/button";
 import {
-  RiFileTextLine,
-  RiQuestionnaireFill,
-  RiUser3Fill,
-  RiUserFollowFill,
+    RiFileTextLine,
+    RiQuestionnaireFill,
+    RiUser3Fill,
+    RiUserFollowFill,
 } from "@remixicon/react";
 
 export default function AdminDemandesPage() {

@@ -14,75 +14,10 @@ import {
     SidebarMenuItem,
     SidebarRail,
 } from "@/components/ui/sidebar";
-import {
-    RiFileTextLine,
-    RiLeafLine,
-    RiLogoutBoxLine,
-    RiQuestionnaireFill,
-    RiScanLine,
-    RiSettings3Line,
-    RiUser3Fill,
-} from "@remixicon/react";
+import { ADMIN_PAGES_WITH_TITLE, TEAM } from "@/constants/pages";
+import { RiLogoutBoxLine } from "@remixicon/react";
 import Image from "next/image";
 import SidebarNavItem from "./sidebar-nav-item";
-
-// This is sample data.
-export const data = {
-    teams: [
-        {
-            name: "Made In Neuilly",
-            logo: "https://res.cloudinary.com/dlzlfasou/image/upload/v1741345507/logo-01_kp2j8x.png",
-        },
-    ],
-    navMain: [
-        {
-            title: "Principales",
-            items: [
-                {
-                    title: "Tableau de bord",
-                    url: "/admin",
-                    icon: RiScanLine,
-                    isActive: true,
-                },
-                {
-                    title: "Artisans",
-                    url: "/admin/artisans",
-                    icon: RiUser3Fill,
-                    isActive: false,
-                },
-                {
-                    title: "Documents",
-                    url: "/admin/documents",
-                    icon: RiFileTextLine,
-                    isActive: false,
-                },
-                {
-                    title: "Demandes",
-                    url: "/admin/demandes",
-                    icon: RiQuestionnaireFill,
-                    isActive: false,
-                },
-            ],
-        },
-        {
-            title: "Autres",
-            items: [
-                {
-                    title: "Paramètres",
-                    url: "/admin/settings",
-                    icon: RiSettings3Line,
-                    isActive: false,
-                },
-                {
-                    title: "Centre d'aide",
-                    url: "/admin/help",
-                    icon: RiLeafLine,
-                    isActive: false,
-                },
-            ],
-        },
-    ],
-};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
@@ -97,15 +32,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       overflow-hidden bg-sidebar-primary text-sidebar-primary-foreground"
                     >
                         <Image
-                            src={data.teams[0].logo}
+                            src={TEAM.logo}
                             width={36}
                             height={36}
-                            alt={data.teams[0].name}
+                            alt={TEAM.name}
                         />
                     </div>
                     <div className="grid flex-1 text-left text-base leading-tight">
                         <span className="truncate font-medium">
-                            {data.teams[0].name}
+                            {TEAM.name}
                         </span>
                     </div>
                 </div>
@@ -114,14 +49,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarHeader>
             <SidebarContent>
                 {/* We create a SidebarGroup for each parent. */}
-                {data.navMain.map((item) => (
+                {ADMIN_PAGES_WITH_TITLE.map((item) => (
                     <SidebarGroup key={item.title}>
                         <SidebarGroupLabel className="uppercase text-muted-foreground/60">
                             {item.title}
                         </SidebarGroupLabel>
                         <SidebarGroupContent className="px-2">
                             <SidebarMenu>
-                                {item.items.map(({ title, url }) => (
+                                {item.pages.map(({ title, url }) => (
                                     <SidebarNavItem
                                         key={title}
                                         url={url}
