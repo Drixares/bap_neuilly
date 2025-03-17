@@ -398,7 +398,7 @@ export default function ContactsTable() {
               id={`${id}-input`}
               ref={inputRef}
               className={cn(
-                "peer min-w-60 ps-9 bg-background bg-gradient-to-br from-accent/60 to-accent",
+                "peer min-w-60 ps-9 bg-background bg-linear-to-br from-accent/60 to-accent",
                 Boolean(table.getColumn("name")?.getFilterValue()) && "pe-9",
               )}
               value={
@@ -789,7 +789,7 @@ function RowActions({
             <AlertDialogAction
               onClick={handleDelete}
               disabled={isUpdatePending}
-              className="bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40"
+              className="bg-destructive text-white shadow-2xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40"
             >
               Delete
             </AlertDialogAction>
