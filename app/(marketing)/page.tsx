@@ -1,5 +1,3 @@
-import { createUser } from "@/actions/user";
-import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Image from "next/image";
@@ -49,9 +47,6 @@ export default async function Home() {
                     >
                         Read our docs
                     </Link>
-                    <form action={createUser}>
-                        <Button>Create Account</Button>
-                    </form>
                 </div>
             </main>
             <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
