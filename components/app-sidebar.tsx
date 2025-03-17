@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { signOut } from "@/actions/sign-out";
 import { SearchForm } from "@/components/search-form";
 import {
     Sidebar,
@@ -72,13 +73,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <hr className="border-t border-border mx-2 -mt-px" />
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton className="font-medium gap-3 h-9 rounded-md bg-linear-to-r hover:bg-transparent hover:from-sidebar-accent hover:to-sidebar-accent/40 data-[active=true]:from-primary/20 data-[active=true]:to-primary/5 [&>svg]:size-auto">
+                        <SidebarMenuButton 
+                            className="font-medium gap-3 h-9 rounded-md bg-linear-to-r hover:bg-transparent 
+                            hover:from-sidebar-accent hover:to-sidebar-accent/40 data-[active=true]:from-primary/20 
+                            data-[active=true]:to-primary/5 [&>svg]:size-auto cursor-pointer"
+                            onClick={signOut}
+                        >
                             <RiLogoutBoxLine
-                                className="text-muted-foreground/60 group-data-[active=true]/menu-button:text-primary"
-                                size={22}
+                                size={16}
+                                className="opacity-60"
                                 aria-hidden="true"
                             />
-                            <span>Sign Out</span>
+                            <span>Sign out</span>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>

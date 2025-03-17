@@ -5,13 +5,25 @@ import BreadcrumbComponent from "@/components/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import UserDropdown from "@/components/user-dropdown";
+import { auth } from "@/lib/auth";
 import AdminProvider from "@/providers/admin-provider";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function AdminLayout({
+export default async function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    if (!session) {
+        return redirect("/");
+    }
+
     return (
         <AdminProvider>
             <SidebarProvider>
@@ -28,7 +40,11 @@ export default function AdminLayout({
                     </div>
                     <div className="flex gap-3 ml-auto">
                         {/* <FeedbackDialog /> */}
-                        <UserDropdown />
+                        <UserDropdown 
+                            image={session.user.image} 
+                            name={session.user.name} 
+                            email={session.user.email} 
+                        />
                     </div>
                 </header>
                 <div className="flex flex-1 flex-col gap-4 lg:gap-6 py-4 lg:py-6">
