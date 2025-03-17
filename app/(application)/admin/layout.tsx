@@ -5,6 +5,7 @@ import BreadcrumbComponent from "@/components/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import UserDropdown from "@/components/user-dropdown";
+import AdminProvider from "@/providers/admin-provider";
 
 export default function AdminLayout({
     children,
@@ -12,9 +13,10 @@ export default function AdminLayout({
     children: React.ReactNode;
 }) {
     return (
-        <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset className="overflow-hidden px-4 md:px-6 lg:px-8">
+        <AdminProvider>
+            <SidebarProvider>
+                <AppSidebar />
+                <SidebarInset className="overflow-hidden px-4 md:px-6 lg:px-8">
                 <header className="flex h-16 shrink-0 items-center gap-2 border-b">
                     <div className="flex flex-1 items-center gap-2 px-3">
                         <SidebarTrigger className="-ms-4" />
@@ -32,7 +34,8 @@ export default function AdminLayout({
                 <div className="flex flex-1 flex-col gap-4 lg:gap-6 py-4 lg:py-6">
                     {children}
                 </div>
-            </SidebarInset>
-        </SidebarProvider>
+                </SidebarInset>
+            </SidebarProvider>
+        </AdminProvider>
     );
 }
