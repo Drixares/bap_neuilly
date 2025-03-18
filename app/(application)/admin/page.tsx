@@ -26,6 +26,7 @@ import {
 import UserDropdown from "@/components/user-dropdown";
 import { RiScanLine } from "@remixicon/react";
 import { ButtonExcel } from "@/components/button-excel";
+import PopupExcel from "@/components/ui/popup-excel";
 
 export default function AdminPage() {
   return (
@@ -70,6 +71,9 @@ export default function AdminPage() {
               </p>
             </div>
             <ButtonExcel/>
+            <div className="relative">
+              <PopupExcel/>
+            </div>
           </div>
           {/* Numbers */}
           <StatsGrid

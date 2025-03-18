@@ -3,8 +3,7 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
-import { useState, useRef } from "react";
-import { importFileAction } from "@/actions/import";
+import { popupEvents } from "@/components/ui/popup-excel";  
 import { cn } from "@/lib/utils";
 
 const buttonVariantsExcel = cva(
@@ -57,60 +56,22 @@ function ButtonExcel({
   children,
   ...props
 }: ButtonExcelProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const Comp = asChild ? Slot : "button";
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      
-      const result = await importFileAction(formData);
-      
-      if (result.success) {
-        onImportSuccess?.(result.message);
-      } else {
-        onImportError?.(result.message);
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Une erreur s'est produite";
-      onImportError?.(errorMessage);
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
+    popupEvents.open();
   };
 
   return (
-    <>
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        accept=".xlsx,.xls"
-        onChange={handleFileChange}
-      />
-      <Comp
-        data-slot="button"
-        className={cn(buttonVariantsExcel({ variant, size, className }))}
-        onClick={handleClick}
-        disabled={isLoading}
-        {...props}
-      >
-        {isLoading ? "Importation..." : children || label}
-      </Comp>
-    </>
+    <Comp
+      data-slot="button"
+      className={cn(buttonVariantsExcel({ variant, size, className }))}
+      onClick={handleClick}
+      {...props}
+    >
+      {children || label}
+    </Comp>
   );
 }
 
