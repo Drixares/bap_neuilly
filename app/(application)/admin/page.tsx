@@ -1,4 +1,3 @@
-import ContactsTable from "@/components/contacts-table";
 import { StatsGrid } from "@/components/stats-grid";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
@@ -12,6 +11,7 @@ import {
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { CreatorsTable } from "./_components/creators-table";
 
 export const metadata: Metadata = {
     title: "Made In Neuilly - Administration",
@@ -75,7 +75,7 @@ export default async function AdminPage() {
             />
             {/* Table */}
             <div className="min-h-[100vh] flex-1 md:min-h-min">
-                <ContactsTable />
+                <CreatorsTable />
             </div>
         </>
     );
