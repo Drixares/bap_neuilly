@@ -7,8 +7,15 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // Helper function to find column names in Excel data
-export function findColumn(row: ExcelRow, possibleNames: string[]): string | null {
-    return Object.keys(row).find(key => 
-        possibleNames.some(name => key.toLowerCase() === name.toLowerCase())
-    ) ?? null;
+export function findColumn(
+    row: ExcelRow,
+    possibleNames: string[]
+): string | null {
+    return (
+        Object.keys(row).find((key) =>
+            possibleNames.some(
+                (name) => key.toLowerCase() === name.toLowerCase()
+            )
+        ) ?? null
+    );
 }
