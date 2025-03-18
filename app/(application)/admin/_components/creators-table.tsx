@@ -15,10 +15,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+    DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -342,20 +340,6 @@ function RowActions({
     const [isUpdatePending, startUpdateTransition] = useTransition();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-    const handleVerifiedToggle = () => {
-        startUpdateTransition(() => {
-            const updatedData = data.map((dataItem) => {
-                if (dataItem.id === item.id) {
-                    return {
-                        ...dataItem,
-                        emailVerified: !item.emailVerified,
-                    };
-                }
-                return dataItem;
-            });
-            setData(updatedData);
-        });
-    };
 
     const handleDelete = () => {
         startUpdateTransition(async () => {
@@ -401,17 +385,6 @@ function RowActions({
                     </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-auto">
-                    <DropdownMenuGroup>
-                        <DropdownMenuItem
-                            onClick={handleVerifiedToggle}
-                            disabled={isUpdatePending}
-                        >
-                            {item.emailVerified
-                                ? "Déverifier le créateur"
-                                : "Vérifier le créateur"}
-                        </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                    <DropdownMenuSeparator />
                     <DropdownMenuItem
                         onClick={() => setShowDeleteDialog(true)}
                         variant="destructive"
