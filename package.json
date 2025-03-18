@@ -12,6 +12,7 @@
         "studio": "drizzle-kit studio",
         "generate": "drizzle-kit generate",
         "migrate": "drizzle-kit migrate",
+        "db:push": "drizzle-kit push",
         "generate:auth": "pnpx @better-auth/cli@latest generate --output ./db/schema/auth-schema.ts"
     },
     "dependencies": {

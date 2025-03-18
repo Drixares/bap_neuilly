@@ -1,8 +1,8 @@
 "use client"
-import { useState, useRef, useEffect } from "react";
-import DropzoneExcel from "./dropzone-excel";
 import { importFileAction } from "@/actions/import";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "./button";
+import DropzoneExcel from "./dropzone-excel";
 
 const popupEvents = {
     open: () => {
@@ -11,7 +11,7 @@ const popupEvents = {
     }
 };
 
-export default function PopupExcel() {
+export default function PopupImportExcel() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isImporting, setIsImporting] = useState(false);
@@ -89,13 +89,12 @@ export default function PopupExcel() {
     return (
         <>
             <div className="fixed inset-0 bg-black/50 z-40" />
-            
             <section 
                 ref={popupRef}
                 className="fixed flex flex-col items-center bg-[#1E1E21] w-[90%] max-w-md h-auto top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 p-6 border border-gray-700/50 rounded-lg shadow-xl"
             >
                 <div className="flex justify-between w-full mb-4">
-                    <h2 className="text-xl font-medium">Importer les utilisateurs</h2>
+                    <h2 className="text-xl font-medium">Importer les créateurs</h2>
                     <button 
                         onClick={() => setIsOpen(false)}
                         className="text-gray-400 hover:text-white"
@@ -132,3 +131,4 @@ export default function PopupExcel() {
 }
 
 export { popupEvents };
+

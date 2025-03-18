@@ -42,11 +42,11 @@ interface StatsGridProps {
     stats: StatsCardProps[];
 }
 
-export function StatsGrid({ stats }: StatsGridProps) {
+export async function StatsGrid({ stats }: StatsGridProps) {
     return (
         <div className="grid grid-cols-2 min-[1200px]:grid-cols-4 border border-border rounded-xl bg-linear-to-br from-sidebar/60 to-sidebar">
-            {stats.map((stat) => (
-                <StatsCard key={stat.title} {...stat} />
+            {stats.map((stat, index) => (
+                <StatsCard key={index} {...stat} />
             ))}
         </div>
     );

@@ -1,25 +1,15 @@
-import ContactsTable from "@/components/contacts-table";
-import { StatsGrid } from "@/components/stats-grid";
-import { Button } from "@/components/ui/button";
+import ButtonImportExcel from "@/components/button-excel";
+import PopupImportExcel from "@/components/ui/popup-excel";
 import { auth } from "@/lib/auth";
-import {
-  RiFileTextLine,
-  RiFileUploadLine,
-  RiQuestionnaireFill,
-  RiUser3Fill,
-  RiUserFollowFill
-} from "@remixicon/react";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-
-import { ButtonExcel } from "@/components/button-excel";
-import PopupExcel from "@/components/ui/popup-excel";
+import AdminStatsGrid from "./_components/admin-stats-grid";
+import { CreatorsTable } from "./_components/creators-table";
 
 export const metadata: Metadata = {
     title: "Made In Neuilly - Administration",
 };
-
 
 export default async function AdminPage() {
     const session = await auth.api.getSession({
@@ -43,54 +33,15 @@ export default async function AdminPage() {
                         de nouveaux artisans avec facilité !
                     </p>
                 </div>
-                <Button className="px-3">
-                    <RiFileUploadLine />
-                    Importer des artisans
-                </Button>
+                <ButtonImportExcel />
+                <PopupImportExcel />
             </div>
             {/* Numbers */}
-            <StatsGrid
-                stats={[
-                    {
-                        title: "Artisans inscrits",
-                        value: "30",
-                        href: "/admin/artisans",
-                        icon: RiUser3Fill,
-                    },
-                    {
-                        title: "Artisans validés",
-                        value: "24",
-                        href: "/admin/artisans",
-                        icon: RiUserFollowFill,
-                    },
-                    {
-                        title: "Documents",
-                        value: "12",
-                        href: "/admin/documents",
-                        icon: RiFileTextLine,
-                    },
-                    {
-                        title: "Demandes en attente",
-                        value: "5",
-                        href: "/admin/demandes",
-                        icon: RiQuestionnaireFill,
-                    },
-                ]}
-            />
+            <AdminStatsGrid />
             {/* Table */}
             <div className="min-h-[100vh] flex-1 md:min-h-min">
-                <ContactsTable />
+                <CreatorsTable />
             </div>
-            <ButtonExcel/>
-            <div className="relative">
-              <PopupExcel/>
-            </div>
-          {/* ADMIN STATS GRID */}
-
-          {/* Table */}
-          <div className="min-h-[100vh] flex-1 md:min-h-min">
-            <ContactsTable />
-          </div>
-      </>
-  );
+        </>
+    );
 }
