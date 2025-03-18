@@ -17,7 +17,6 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
     SidebarInset,
@@ -26,6 +25,7 @@ import {
 } from "@/components/ui/sidebar";
 import UserDropdown from "@/components/user-dropdown";
 import { RiScanLine } from "@remixicon/react";
+import { ButtonExcel } from "@/components/button-excel";
 
 export default function AdminPage() {
   return (
@@ -69,7 +69,7 @@ export default function AdminPage() {
                 ones with ease!
               </p>
             </div>
-            <Button className="px-3">Add Contact</Button>
+            <ButtonExcel/>
           </div>
           {/* Numbers */}
           <StatsGrid
