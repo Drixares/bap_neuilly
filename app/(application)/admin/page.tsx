@@ -1,8 +1,6 @@
-import { Button } from "@/components/ui/button";
+import ButtonImportExcel from "@/components/button-excel";
+import PopupImportExcel from "@/components/ui/popup-excel";
 import { auth } from "@/lib/auth";
-import {
-    RiFileUploadLine    
-} from "@remixicon/react";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -35,10 +33,8 @@ export default async function AdminPage() {
                         de nouveaux artisans avec facilité !
                     </p>
                 </div>
-                <Button className="px-3">
-                    <RiFileUploadLine />
-                    Importer des artisans
-                </Button>
+                <ButtonImportExcel />
+                <PopupImportExcel />
             </div>
             {/* Numbers */}
             <AdminStatsGrid />
