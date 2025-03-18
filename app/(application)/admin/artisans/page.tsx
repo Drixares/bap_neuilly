@@ -1,11 +1,11 @@
-import { ArtisanGrid } from "@/app/(application)/admin/artisans/_components/artisan-grid";
+import { CreatorGrid } from "@/app/(application)/admin/artisans/_components/creator-grid";
 import { auth } from "@/lib/auth";
-import { Artisan } from "@/types/artisan";
+import { Creator } from "@/types/creator";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 // Mock data for demonstration
-const mockArtisans: Artisan[] = [
+const mockCreators: Creator[] = [
     {
         id: "1",
         name: "Jean Dupont",
@@ -27,7 +27,7 @@ const mockArtisans: Artisan[] = [
             businessDescription: "Création de meubles artisanaux",
             registrationNumber: "FR123456789",
             phone: "+33 6 12 34 56 78",
-            website: "www.atelierdupont.fr",
+            website: "https://atelierdupont.fr",
             createdAt: new Date(),
             updatedAt: new Date(),
         },
@@ -53,7 +53,7 @@ const mockArtisans: Artisan[] = [
             businessDescription: "Création de pièces en céramique",
             registrationNumber: "FR987654321",
             phone: "+33 6 98 76 54 32",
-            website: "www.ceramiquesmartin.fr",
+            website: "https://ceramiquesmartin.fr",
             createdAt: new Date(),
             updatedAt: new Date(),
         },
@@ -79,7 +79,7 @@ const mockArtisans: Artisan[] = [
             businessDescription: "Création de pièces en fer forgé",
             registrationNumber: "FR456789123",
             phone: "+33 6 45 67 89 01",
-            website: "www.forgedubois.fr",
+            website: "https://forgedubois.fr",
             createdAt: new Date(),
             updatedAt: new Date(),
         },
@@ -101,16 +101,16 @@ export default async function AdminArtisansPage() {
             <div className="flex items-center justify-between gap-4">
                 <div className="space-y-1">
                     <h1 className="text-2xl font-semibold">
-                        Liste des artisans
+                        Liste des créateurs
                     </h1>
                     <p className="text-sm text-muted-foreground">
-                        Gérez ou créez de nouveaux artisans avec facilité !
+                        Gérez ou créez de nouveaux créateurs avec facilité !
                     </p>
                 </div>
             </div>
 
-            {/* Artisan grid */}
-            <ArtisanGrid artisans={mockArtisans} />
+            {/* Creator grid */}
+            <CreatorGrid creators={mockCreators} />
         </div>
     );
 }

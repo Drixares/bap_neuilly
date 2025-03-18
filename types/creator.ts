@@ -1,9 +1,9 @@
 import { BusinessInfo, User } from "@/db/schema/auth-schema";
 
-export type Artisan = User & {
+export type Creator = User & {
     businessInfo: BusinessInfo | null;
 };
 
-export type ArtisanCardProps = {
-    artisan: Artisan;
-}; 
+export type CreatorCardProps = {
+    creator: Creator;
+};
