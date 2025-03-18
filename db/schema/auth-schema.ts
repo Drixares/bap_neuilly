@@ -5,6 +5,7 @@ export const user = pgTable("user", {
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     emailVerified: boolean("email_verified").notNull(),
+    verificationDate: timestamp("verification_date"),
     role: text("role"),
     image: text("image"),
     bio: text("bio"),
@@ -23,8 +24,6 @@ export const businessInfo = pgTable("business_info", {
     registrationNumber: text("registration_number"),
     phone: text("phone").notNull(),
     website: text("website"),
-    isVerified: boolean("is_verified").notNull().default(false),
-    verificationDate: timestamp("verification_date"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
