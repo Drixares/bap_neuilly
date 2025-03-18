@@ -1,5 +1,6 @@
 "use client";
 
+import { deleteUsers } from "@/actions/user";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -9,6 +10,7 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
+    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,7 +18,7 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuTrigger
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,6 +38,8 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import {
+    RiDeleteBinLine,
+    RiErrorWarningLine,
     RiFilter3Line,
     RiMoreLine,
     RiVerifiedBadgeFill,
@@ -201,6 +205,25 @@ export function CreatorsTable() {
         },
     });
 
+    const handleDeleteRows = async () => {
+        const selectedRows = table.getSelectedRowModel().rows;
+        const ids = selectedRows.map((row) => row.original.id);
+
+        const { success, message } = await deleteUsers(ids);
+
+        if (!success) {
+            console.error(message);
+            return;
+        }
+
+        const updatedData = data.filter(
+            (item) => !ids.includes(item.id)
+        );
+
+        setData(updatedData);
+        table.resetRowSelection();
+    };
+
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -220,40 +243,103 @@ export function CreatorsTable() {
                         className="max-w-sm"
                     />
                 </div>
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
-                            <RiFilter3Line className="mr-2 h-4 w-4" />
-                            Filtrer
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent align="end">
-                        {table
-                            .getAllColumns()
-                            .filter((column) => column.getCanHide())
-                            .map((column) => {
-                                return (
+                {/* Delete button */}
+                <div className="flex items-center gap-3">
+                    {table.getSelectedRowModel().rows.length > 0 && (
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button className="ml-auto" variant="outline">
+                                    <RiDeleteBinLine
+                                        className="-ms-1 opacity-60"
+                                        size={16}
+                                        aria-hidden="true"
+                                    />
+                                    Delete
+                                    <span className="-me-1 ms-1 inline-flex h-5 max-h-full items-center rounded border border-border bg-background px-1 font-[inherit] text-[0.625rem] font-medium text-muted-foreground/70">
+                                        {table.getSelectedRowModel().rows.length}
+                                    </span>
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <div className="flex flex-col gap-2 max-sm:items-center sm:flex-row sm:gap-4">
                                     <div
-                                        key={column.id}
-                                        className="flex items-center space-x-2 py-0.5"
+                                        className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border"
+                                        aria-hidden="true"
                                     >
-                                        <Checkbox
-                                            checked={column.getIsVisible()}
-                                            onCheckedChange={(value) =>
-                                                column.toggleVisibility(!!value)
-                                            }
+                                        <RiErrorWarningLine
+                                            className="opacity-80"
+                                            size={16}
                                         />
-                                        <Label
-                                            htmlFor={column.id}
-                                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                        >
-                                            {column.id}
-                                        </Label>
                                     </div>
-                                );
-                            })}
-                    </PopoverContent>
-                </Popover>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                            Es-tu sûr de vouloir supprimer ces créateurs ?
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            Cette action ne peut pas être annulée.
+                                            Cette action supprimera définitivement{" "}
+                                            {
+                                                table.getSelectedRowModel().rows
+                                                    .length
+                                            }{" "}
+                                            {table.getSelectedRowModel().rows
+                                                .length === 1
+                                                ? "créateur sélectionné"
+                                                : "créateurs sélectionnés"}
+                                            .
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                </div>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>
+                                        Annuler
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction
+                                        onClick={handleDeleteRows}
+                                        className="bg-destructive text-white shadow-2xs hover:bg-destructive/90 
+                                        focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40"
+                                    >
+                                        Supprimer
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    )}
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant="outline" className="ml-auto">
+                                <RiFilter3Line className="mr-2 h-4 w-4" />
+                                Filtrer
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent align="end">
+                            {table
+                                .getAllColumns()
+                                .filter((column) => column.getCanHide())
+                                .map((column) => {
+                                    return (
+                                        <div
+                                            key={column.id}
+                                            className="flex items-center space-x-2 py-0.5"
+                                        >
+                                            <Checkbox
+                                                checked={column.getIsVisible()}
+                                                onCheckedChange={(value) =>
+                                                    column.toggleVisibility(!!value)
+                                                }
+                                            />
+                                            <Label
+                                                htmlFor={column.id}
+                                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                            >
+                                                {column.id}
+                                            </Label>
+                                        </div>
+                                    );
+                                })}
+                        </PopoverContent>
+                    </Popover>
+                </div>
             </div>
             <div className="rounded-md border">
                 <Table>
@@ -339,7 +425,6 @@ function RowActions({
 }) {
     const [isUpdatePending, startUpdateTransition] = useTransition();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
 
     const handleDelete = () => {
         startUpdateTransition(async () => {
