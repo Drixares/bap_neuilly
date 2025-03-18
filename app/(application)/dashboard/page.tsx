@@ -1,9 +1,9 @@
 const CreatorDashboard = () => {
-    return ( 
+    return (
         <div>
             <h1>Creator Dashboard</h1>
         </div>
-     );
-}
- 
+    );
+};
+
 export default CreatorDashboard;

@@ -1,74 +1,91 @@
+import ContactsTable from "@/components/contacts-table";
+import { StatsGrid } from "@/components/stats-grid";
+import { Button } from "@/components/ui/button";
+import { auth } from "@/lib/auth";
+import {
+    RiFileTextLine,
+    RiFileUploadLine,
+    RiQuestionnaireFill,
+    RiUser3Fill,
+    RiUserFollowFill,
+} from "@remixicon/react";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Experiment 01 - Crafted.is",
-};
-
-import { AppSidebar } from "@/components/app-sidebar";
 import { Banner } from "@/components/banner";
 import ContactsTable from "@/components/contacts-table";
 import FeedbackDialog from "@/components/feedback-dialog";
-import { StatsGrid } from "@/components/stats-grid";
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
-import {
-    SidebarInset,
-    SidebarProvider,
-    SidebarTrigger,
-} from "@/components/ui/sidebar";
 import UserDropdown from "@/components/user-dropdown";
 import { RiScanLine } from "@remixicon/react";
 import { ButtonExcel } from "@/components/button-excel";
 import PopupExcel from "@/components/ui/popup-excel";
 
-export default function AdminPage() {
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset className="overflow-hidden px-4 md:px-6 lg:px-8">
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b">
-          <div className="flex flex-1 items-center gap-2 px-3">
-            <SidebarTrigger className="-ms-4" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
+export const metadata: Metadata = {
+    title: "Made In Neuilly - Administration",
+};
+
+
+export default async function AdminPage() {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    if (!session) {
+        return redirect("/");
+    }
+
+    return (
+        <>
+            {/* Page intro */}
+            <div className="flex items-center justify-between gap-4">
+                <div className="space-y-1">
+                    <h1 className="text-2xl font-semibold">
+                        Bonjour, {session.user.name}!
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                        Voici un récapitulatif de vos artisans. Gérez ou créez
+                        de nouveaux artisans avec facilité !
+                    </p>
+                </div>
+                <Button className="px-3">
+                    <RiFileUploadLine />
+                    Importer des artisans
+                </Button>
+            </div>
+            {/* Numbers */}
+            <StatsGrid
+                stats={[
+                    {
+                        title: "Artisans inscrits",
+                        value: "30",
+                        href: "/admin/artisans",
+                        icon: RiUser3Fill,
+                    },
+                    {
+                        title: "Artisans validés",
+                        value: "24",
+                        href: "/admin/artisans",
+                        icon: RiUserFollowFill,
+                    },
+                    {
+                        title: "Documents",
+                        value: "12",
+                        href: "/admin/documents",
+                        icon: RiFileTextLine,
+                    },
+                    {
+                        title: "Demandes en attente",
+                        value: "5",
+                        href: "/admin/demandes",
+                        icon: RiQuestionnaireFill,
+                    },
+                ]}
             />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    <RiScanLine size={22} aria-hidden="true" />
-                    <span className="sr-only">Dashboard</span>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Contacts</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-          <div className="flex gap-3 ml-auto">
-            <FeedbackDialog />
-            <UserDropdown />
-          </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 lg:gap-6 py-4 lg:py-6">
-          {/* Page intro */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-semibold">Oilà, Larry!</h1>
-              <p className="text-sm text-muted-foreground">
-                Here&rsquo;s an overview of your contacts. Manage or create new
-                ones with ease!
-              </p>
+            {/* Table */}
+            <div className="min-h-[100vh] flex-1 md:min-h-min">
+                <ContactsTable />
             </div>
             <ButtonExcel/>
             <div className="relative">
@@ -157,8 +174,6 @@ export default function AdminPage() {
             <ContactsTable />
           </div>
         </div>
-      </SidebarInset>
-      <Banner />
-    </SidebarProvider>
+      <>
   );
 }
