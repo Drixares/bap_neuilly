@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Document } from "@/db/schema/auth-schema";
 import { cn } from "@/lib/utils";
-import { RiFile2Fill, RiFileExcel2Fill, RiFilePdf2Fill, RiFileWord2Fill } from "@remixicon/react";
+import { RemixiconComponentType, RiFile2Fill, RiFileExcel2Fill, RiFilePdf2Fill, RiFileWord2Fill } from "@remixicon/react";
 import { formatDistanceToNow } from "date-fns";
+import { fr } from "date-fns/locale";
 import { DownloadIcon } from "lucide-react";
 import Link from "next/link";
 import { useCallback } from "react";
@@ -12,7 +13,12 @@ interface DocumentCardProps {
     document: Document;
 }
 
-const icons = {
+type DocumentCardIcon = {
+    icon: RemixiconComponentType;
+    color: string;
+}
+
+const icons: Record<string, DocumentCardIcon> = {
     "application/pdf": {
         icon: RiFilePdf2Fill,
         color: "text-red-400/60",
@@ -52,11 +58,11 @@ export function DocumentCard({ document }: DocumentCardProps) {
     }, []);
 
     return (
-        <Card className="flex flex-col h-full hover:shadow-md transition-shadow">
+        <Card className="flex flex-col h-full">
             <CardHeader>
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between gap-1">
                     <div className="flex-1">
-                        <CardTitle className="text-lg font-semibold truncate">
+                        <CardTitle className="text-lg font-semibold">
                             {document.title}
                         </CardTitle>
                         <CardDescription className="text-sm text-muted-foreground">
@@ -71,15 +77,15 @@ export function DocumentCard({ document }: DocumentCardProps) {
                     {document.description}
                 </p>
             </CardContent>
-            <CardFooter className="mt-auto pt-4">
+            <CardFooter className="mt-auto">
                 <div className="flex items-center justify-between w-full">
                     <span className="text-xs text-muted-foreground">
-                        Added {formatDistanceToNow(new Date(document.createdAt), { addSuffix: true })}
+                        Ajouté {formatDistanceToNow(new Date(document.createdAt), { addSuffix: true, locale: fr })}
                     </span>
                     <Button variant="ghost" size="default" asChild>
                         <Link href={document.fileUrl} target="_blank">
                             <DownloadIcon className="size-4" />
-                            Download
+                            Télécharger
                         </Link>
                     </Button>
                 </div>

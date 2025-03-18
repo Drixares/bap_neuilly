@@ -4,8 +4,8 @@ import { DocumentGrid } from "./_components/document-grid";
 const mockDocuments = [
     {
         id: "1",
-        title: "Company Guidelines 2024",
-        description: "Official company guidelines and policies for the year 2024.",
+        title: "Guidelines de l'entreprise 2024",
+        description: "Guidelines et politiques de l'entreprise pour l'année 2024.",
         fileUrl: "https://storage.minio.com/documents/guidelines-2024.pdf",
         fileKey: "guidelines-2024.pdf",
         fileSize: "2097152", // 2MB
@@ -16,8 +16,8 @@ const mockDocuments = [
     },
     {
         id: "2",
-        title: "Q4 Financial Report",
-        description: "Detailed financial analysis and metrics for Q4 2023.",
+        title: "Rapport financier Q4 2023",
+        description: "Analyse financière détaillée et métriques pour le quatrième trimestre 2023.",
         fileUrl: "https://storage.minio.com/documents/q4-report.xlsx",
         fileKey: "q4-report.xlsx",
         fileSize: "1048576", // 1MB
