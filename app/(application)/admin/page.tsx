@@ -1,16 +1,12 @@
-import { StatsGrid } from "@/components/stats-grid";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import {
-    RiFileTextLine,
-    RiFileUploadLine,
-    RiQuestionnaireFill,
-    RiUser3Fill,
-    RiUserFollowFill,
+    RiFileUploadLine    
 } from "@remixicon/react";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import AdminStatsGrid from "./_components/admin-stats-grid";
 import { CreatorsTable } from "./_components/creators-table";
 
 export const metadata: Metadata = {
@@ -45,34 +41,7 @@ export default async function AdminPage() {
                 </Button>
             </div>
             {/* Numbers */}
-            <StatsGrid
-                stats={[
-                    {
-                        title: "Artisans inscrits",
-                        value: "30",
-                        href: "/admin/artisans",
-                        icon: RiUser3Fill,
-                    },
-                    {
-                        title: "Artisans validés",
-                        value: "24",
-                        href: "/admin/artisans",
-                        icon: RiUserFollowFill,
-                    },
-                    {
-                        title: "Documents",
-                        value: "12",
-                        href: "/admin/documents",
-                        icon: RiFileTextLine,
-                    },
-                    {
-                        title: "Demandes en attente",
-                        value: "5",
-                        href: "/admin/demandes",
-                        icon: RiQuestionnaireFill,
-                    },
-                ]}
-            />
+            <AdminStatsGrid />
             {/* Table */}
             <div className="min-h-[100vh] flex-1 md:min-h-min">
                 <CreatorsTable />
