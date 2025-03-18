@@ -7,5 +7,5 @@ export async function adminUserExists() {
         where: eq(user.role, "admin"),
     });
 
-    return adminUser !== null;
+    return adminUser !== null && adminUser !== undefined;
 }

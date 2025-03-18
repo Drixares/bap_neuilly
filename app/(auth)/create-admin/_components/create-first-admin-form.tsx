@@ -34,7 +34,7 @@ export default function CreateFirstAdminForm({
         if (res.success) {
             redirect("/admin");
         } else {
-            console.error(res.errors);
+            console.error(res.errors || res.message);
         }
     };
 

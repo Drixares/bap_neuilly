@@ -73,7 +73,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <hr className="border-t border-border mx-2 -mt-px" />
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton 
+                        <SidebarMenuButton
                             className="font-medium gap-3 h-9 rounded-md bg-linear-to-r hover:bg-transparent 
                             hover:from-sidebar-accent hover:to-sidebar-accent/40 data-[active=true]:from-primary/20 
                             data-[active=true]:to-primary/5 [&>svg]:size-auto cursor-pointer"

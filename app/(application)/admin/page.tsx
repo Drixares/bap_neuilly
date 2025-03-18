@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import {
     RiFileTextLine,
+    RiFileUploadLine,
     RiQuestionnaireFill,
     RiUser3Fill,
     RiUserFollowFill,
@@ -17,7 +18,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
-
     const session = await auth.api.getSession({
         headers: await headers(),
     });
@@ -31,13 +31,18 @@ export default async function AdminPage() {
             {/* Page intro */}
             <div className="flex items-center justify-between gap-4">
                 <div className="space-y-1">
-                    <h1 className="text-2xl font-semibold">Bonjour, {session.user.name}!</h1>
+                    <h1 className="text-2xl font-semibold">
+                        Bonjour, {session.user.name}!
+                    </h1>
                     <p className="text-sm text-muted-foreground">
                         Voici un récapitulatif de vos artisans. Gérez ou créez
                         de nouveaux artisans avec facilité !
                     </p>
                 </div>
-                <Button className="px-3">Importer des artisans</Button>
+                <Button className="px-3">
+                    <RiFileUploadLine />
+                    Importer des artisans
+                </Button>
             </div>
             {/* Numbers */}
             <StatsGrid

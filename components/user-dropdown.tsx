@@ -17,9 +17,13 @@ interface UserDropdownProps {
     image: string | null | undefined;
     name: string;
     email: string;
-};
+}
 
-export default async function UserDropdown({ image, name, email }: UserDropdownProps) {
+export default async function UserDropdown({
+    image,
+    name,
+    email,
+}: UserDropdownProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -29,7 +33,10 @@ export default async function UserDropdown({ image, name, email }: UserDropdownP
                 >
                     <Avatar className="size-8">
                         <AvatarImage
-                            src={image || "https://res.cloudinary.com/dlzlfasou/image/upload/v1741345506/user_sam4wh.png"}
+                            src={
+                                image ||
+                                "https://res.cloudinary.com/dlzlfasou/image/upload/v1741345506/user_sam4wh.png"
+                            }
                             width={32}
                             height={32}
                             alt="Profile image"
@@ -60,7 +67,11 @@ export default async function UserDropdown({ image, name, email }: UserDropdownP
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                    <button type="submit" className="w-full flex items-center gap-2" onClick={signOut}>
+                    <button
+                        type="submit"
+                        className="w-full flex items-center gap-2"
+                        onClick={signOut}
+                    >
                         <RiLogoutBoxLine
                             size={16}
                             className="opacity-60"
