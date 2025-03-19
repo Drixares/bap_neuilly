@@ -2,7 +2,14 @@
 
 import { LoginAdminFormSchema } from "@/app/schema";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
@@ -13,21 +20,20 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-
 const ERROR_MESSAGES = {
-    "INVALID_EMAIL_OR_PASSWORD": "Email ou mot de passe incorrect. Veuillez réessayer.",
-}
+    INVALID_EMAIL_OR_PASSWORD:
+        "Email ou mot de passe incorrect. Veuillez réessayer.",
+};
 
 const LOGIN_REDIRECT_PATH = {
-    "admin": "/admin",
-    "user": "/dashboard",
-}
+    admin: "/admin",
+    user: "/dashboard",
+};
 
-export default function LoginAdminForm({
+export default function LoginForm({
     className,
     ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-
     const router = useRouter();
 
     const form = useForm<LoginAdminFormSchemaType>({
@@ -46,19 +52,27 @@ export default function LoginAdminForm({
             });
 
             if (res?.error) {
-                toast.error(ERROR_MESSAGES[res.error.code as keyof typeof ERROR_MESSAGES], {
-                    position: "top-center",
-                    icon: <TriangleAlert className="size-4" />,
-                    duration: 3000,
-                });
+                toast.error(
+                    ERROR_MESSAGES[
+                        res.error.code as keyof typeof ERROR_MESSAGES
+                    ],
+                    {
+                        position: "top-center",
+                        icon: <TriangleAlert className="size-4" />,
+                        duration: 3000,
+                    }
+                );
             }
 
             const { data } = await authClient.getSession();
 
             if (data) {
-                router.push(LOGIN_REDIRECT_PATH[data.user.role as keyof typeof LOGIN_REDIRECT_PATH]);
+                router.push(
+                    LOGIN_REDIRECT_PATH[
+                        data.user.role as keyof typeof LOGIN_REDIRECT_PATH
+                    ]
+                );
             }
-           
         } catch (error) {
             toast.error("Une erreur est survenue lors de la connexion", {
                 position: "top-center",
@@ -71,7 +85,10 @@ export default function LoginAdminForm({
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="flex flex-col gap-6"
+                >
                     <div className="flex flex-col items-center gap-2">
                         <div className="flex h-8 w-8 items-center justify-center rounded-md">
                             <GalleryVerticalEnd className="size-6" />
@@ -80,7 +97,8 @@ export default function LoginAdminForm({
                             Made In Neuilly
                         </h1>
                         <div className="text-center text-sm">
-                            Connectez-vous pour accéder à l'espace administrateur
+                            Vous êtes un administrateur ou un artisan ?
+                            Connectez vous pour accéder à votre espace.
                         </div>
                     </div>
                     <div className="flex flex-col gap-6">
@@ -136,7 +154,6 @@ export default function LoginAdminForm({
                             )}
                         </Button>
                     </div>
-                    
                 </form>
             </Form>
         </div>
