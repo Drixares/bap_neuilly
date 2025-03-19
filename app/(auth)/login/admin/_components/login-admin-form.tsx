@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { LoginAdminFormSchemaType } from "@/types/admin-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GalleryVerticalEnd, Loader2, TriangleAlert } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -17,10 +18,18 @@ const ERROR_MESSAGES = {
     "INVALID_EMAIL_OR_PASSWORD": "Email ou mot de passe incorrect. Veuillez réessayer.",
 }
 
+const LOGIN_REDIRECT_PATH = {
+    "admin": "/admin",
+    "user": "/dashboard",
+}
+
 export default function LoginAdminForm({
     className,
     ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+
+    const router = useRouter();
+
     const form = useForm<LoginAdminFormSchemaType>({
         resolver: zodResolver(LoginAdminFormSchema),
         defaultValues: {
@@ -29,12 +38,11 @@ export default function LoginAdminForm({
         },
     });
 
-    const onSubmit = async (data: LoginAdminFormSchemaType) => {
+    const onSubmit = async (values: LoginAdminFormSchemaType) => {
         try {
             const res = await authClient.signIn.email({
-                email: data.email,
-                password: data.password,
-                callbackURL: "/admin",
+                email: values.email,
+                password: values.password,
             });
 
             if (res?.error) {
@@ -45,6 +53,12 @@ export default function LoginAdminForm({
                 });
             }
 
+            const { data } = await authClient.getSession();
+
+            if (data) {
+                router.push(LOGIN_REDIRECT_PATH[data.user.role as keyof typeof LOGIN_REDIRECT_PATH]);
+            }
+           
         } catch (error) {
             toast.error("Une erreur est survenue lors de la connexion", {
                 position: "top-center",
