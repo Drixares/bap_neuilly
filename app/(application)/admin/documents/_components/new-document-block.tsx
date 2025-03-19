@@ -36,7 +36,7 @@ export default function NewDocumentBlock() {
     return (
         <>
             <Button onClick={() => setIsDialogOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" />
+                <Plus className="mr-2 size-4" />
                 Nouveau document
             </Button>
 

@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const fontSans = Inter({
@@ -15,7 +16,8 @@ export default function RootLayout({
     return (
         <html lang="en" className="dark scheme-only-dark">
             <body className={`${fontSans.variable} font-sans antialiased`}>
-                {children}
+                <main>{children}</main>
+                <Toaster richColors />
             </body>
         </html>
     );
