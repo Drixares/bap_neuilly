@@ -216,9 +216,7 @@ export function CreatorsTable() {
             return;
         }
 
-        const updatedData = data.filter(
-            (item) => !ids.includes(item.id)
-        );
+        const updatedData = data.filter((item) => !ids.includes(item.id));
 
         setData(updatedData);
         table.resetRowSelection();
@@ -256,7 +254,10 @@ export function CreatorsTable() {
                                     />
                                     Delete
                                     <span className="-me-1 ms-1 inline-flex h-5 max-h-full items-center rounded border border-border bg-background px-1 font-[inherit] text-[0.625rem] font-medium text-muted-foreground/70">
-                                        {table.getSelectedRowModel().rows.length}
+                                        {
+                                            table.getSelectedRowModel().rows
+                                                .length
+                                        }
                                     </span>
                                 </Button>
                             </AlertDialogTrigger>
@@ -273,11 +274,13 @@ export function CreatorsTable() {
                                     </div>
                                     <AlertDialogHeader>
                                         <AlertDialogTitle>
-                                            Es-tu sûr de vouloir supprimer ces créateurs ?
+                                            Es-tu sûr de vouloir supprimer ces
+                                            créateurs ?
                                         </AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            Cette action ne peut pas être annulée.
-                                            Cette action supprimera définitivement{" "}
+                                            Cette action ne peut pas être
+                                            annulée. Cette action supprimera
+                                            définitivement{" "}
                                             {
                                                 table.getSelectedRowModel().rows
                                                     .length
@@ -325,7 +328,9 @@ export function CreatorsTable() {
                                             <Checkbox
                                                 checked={column.getIsVisible()}
                                                 onCheckedChange={(value) =>
-                                                    column.toggleVisibility(!!value)
+                                                    column.toggleVisibility(
+                                                        !!value
+                                                    )
                                                 }
                                             />
                                             <Label
