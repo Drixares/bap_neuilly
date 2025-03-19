@@ -497,7 +497,7 @@ function RowActions({
                     <DialogHeader>
                         <DialogTitle>Modifier le créateur</DialogTitle>
                     </DialogHeader>
-                        <FormUpdateArtisans artisan={item}/>
+                        <FormUpdateArtisans artisanId={item.id}/>
                 </DialogContent>
             </Dialog>
 

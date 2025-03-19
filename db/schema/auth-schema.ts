@@ -1,4 +1,5 @@
 import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { relations } from 'drizzle-orm';
 
 export const user = pgTable("user", {
     id: text("id").primaryKey(),
@@ -12,13 +13,15 @@ export const user = pgTable("user", {
     banned: boolean("banned"),
     banReason: text("ban_reason"),
     banExpires: timestamp("ban_expires"),
-    businessInfoId: uuid("business_info_id").references(() => businessInfo.id),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const businessInfo = pgTable("business_info", {
     id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull().unique().references(() => user.id, { 
+        onDelete: "cascade" 
+    }),
     companyName: text("company_name").notNull(),
     businessDescription: text("business_description"),
     registrationNumber: text("registration_number"),
@@ -69,7 +72,21 @@ export const verification = pgTable("verification", {
     updatedAt: timestamp("updated_at"),
 });
 
-export type BusinessInfo = typeof businessInfo.$inferSelect;
-export type NewBusinessInfo = typeof businessInfo.$inferInsert;
-export type User = typeof user.$inferSelect;
-export type NewUser = typeof user.$inferInsert;
+export const userRelations = relations(user, ({ one }) => ({
+    businessInfo: one(businessInfo, {
+      fields: [user.id],
+      references: [businessInfo.userId],
+    }),
+  }));
+  
+  export const businessInfoRelations = relations(businessInfo, ({ one }) => ({
+    user: one(user, {
+      fields: [businessInfo.userId],
+      references: [user.id],
+    }),
+  }));
+
+  export type BusinessInfo = typeof businessInfo.$inferSelect;
+  export type NewBusinessInfo = typeof businessInfo.$inferInsert;
+  export type User = typeof user.$inferSelect;
+  export type NewUser = typeof user.$inferInsert;

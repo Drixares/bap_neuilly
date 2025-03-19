@@ -28,6 +28,7 @@ export const ProcessedUserSchema = z.object({
 
 export const ProcessedBusinessSchema = z.object({
     id: z.string().uuid(),
+    userId: z.string().uuid(),
     companyName: z.string().min(1),
     businessDescription: z.string().optional(),
     phone: z.string().min(1),

@@ -1,18 +1,25 @@
 "use client"
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { UpdateBusinessAction } from "@/actions/update-business";
+import { getBusinessInfoByArtisanId } from "@/actions/fetch-business-data";
 import { Button } from "@/components/ui/button";
 
 interface BusinessInfo {
     id: string;
-    companyName?: string;
-    businessDescription?: string;
-    phone?: string;
-    website?: string;
-}
+    userId: string;
+    companyName: string;
+    businessDescription?: string | null;  
+    registrationNumber?: string | null;   
+    phone: string;
+    website?: string | null;              
+    createdAt: Date;
+    updatedAt: Date;
+  }
 
 export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) {
     const [businessInfo, setBusinessInfo] = useState<BusinessInfo | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const [formData, setFormData] = useState({
         companyName: "",
@@ -26,23 +33,46 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
         isError: false
     });
 
-    useEffect(() => {
-        console.log("UseEffect déclenché avec:", artisan);
-        console.log("Type de artisan:", typeof artisan);
-        console.log("artisan a businessInfo?", artisan && "businessInfo" in artisan);
 
-        if (artisan && artisan.businessInfo) {
-            console.log("BusinessInfo trouvé:", artisan.businessInfo);
-            setFormData({
-                companyName: artisan.businessInfo.companyName || "",
-                businessDescription: artisan.businessInfo.businessDescription || "",
-                phone: artisan.businessInfo.phone || "",
-                website: artisan.businessInfo.website || ""
-            });
-        } else {
-            console.log("BusinessInfo non trouvé");
+    useEffect(() => {
+
+        if (!artisanId) {
+            console.error("artisanId manquant");
+            setError("ID d'artisan manquant ou invalide");
+            setLoading(false);
+            return;
         }
-    }, [artisan]);
+        async function fetchBusinessInfo() {
+            try {
+                setLoading(true);
+                setError(null);
+                
+                const business = await getBusinessInfoByArtisanId(artisanId);
+                console.log("Données business récupérées:", business);
+                
+                if (business) {
+                    setBusinessInfo(business);
+                    setFormData({
+                        companyName: business.companyName || "",
+                        businessDescription: business.businessDescription || "",
+                        phone: business.phone || "",
+                        website: business.website || ""
+                    });
+                } else {
+                    setError("Aucune information d'entreprise trouvée pour cet artisan");
+                }
+            } catch (err) {
+                console.error("Erreur lors de la récupération des données:", err);
+                setError("Erreur lors de la récupération des informations d'entreprise");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        if (artisanId) {
+            fetchBusinessInfo();
+        }
+    }, [artisanId]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -55,7 +85,7 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
         e.preventDefault();
 
         try {
-            if (!artisan || !artisan.businessInfo || !artisan.businessInfo.id) {
+            if (!businessInfo || !businessInfo.id) {
                 setUpdateStatus({
                     message: "Informations d'entreprise non disponibles",
                     isError: true
@@ -64,7 +94,7 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
             }
 
             const result = await UpdateBusinessAction(
-                artisan.businessInfo.id,
+                businessInfo.id,
                 formData.companyName,
                 formData.phone,
                 formData.businessDescription,
@@ -82,7 +112,25 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
                 isError: true
             });
         }
-    };
+    }
+
+    if (loading) {
+        return <div className="flex justify-center p-4">Chargement des informations...</div>;
+    }
+
+    if (error) {
+        return (
+            <div className="p-4">
+                <div className="bg-red-100 text-red-800 p-4 rounded mb-4">{error}</div>
+                <Button 
+                    onClick={() => setError(null)}
+                    className="bg-primary/90 hover:bg-primary"
+                >
+                    Réessayer
+                </Button>
+            </div>
+        );
+    }
 
     return (
         <form className="flex flex-col mt-8 gap-8" onSubmit={handleSubmit}>

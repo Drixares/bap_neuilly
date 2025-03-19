@@ -108,6 +108,12 @@ export async function importFileAction(formData: FormData) {
                 const hasBusinessData = columnMap.companyName && row[columnMap.companyName];
                 
                 if (hasBusinessData) {
+                    if (!columnMap.phone || !row[columnMap.phone]) {
+                        errors.push(
+                            `Ligne ${index + 2} (entreprise): Le numéro de téléphone est obligatoire`
+                        );
+                        continue;
+                    }
                     const businessData = {
                         id: crypto.randomUUID(),
                         userId: userId, // Associer l'entreprise à l'utilisateur
