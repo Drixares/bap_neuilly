@@ -43,7 +43,6 @@ export async function createFirstAdminUser(
 }
 
 export async function deleteUsers(ids: string[]) {
-
     try {
         await db.delete(user).where(inArray(user.id, ids));
 
@@ -51,7 +50,6 @@ export async function deleteUsers(ids: string[]) {
             success: true,
             message: "Users deleted successfully",
         };
-        
     } catch (error) {
         console.error(error);
         return {

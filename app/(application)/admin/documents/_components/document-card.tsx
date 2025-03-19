@@ -1,8 +1,21 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Document } from "@/db/schema/auth-schema";
 import { cn } from "@/lib/utils";
-import { RemixiconComponentType, RiFile2Fill, RiFileExcel2Fill, RiFilePdf2Fill, RiFileWord2Fill } from "@remixicon/react";
+import {
+    RemixiconComponentType,
+    RiFile2Fill,
+    RiFileExcel2Fill,
+    RiFilePdf2Fill,
+    RiFileWord2Fill,
+} from "@remixicon/react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { DownloadIcon } from "lucide-react";
@@ -16,7 +29,7 @@ interface DocumentCardProps {
 type DocumentCardIcon = {
     icon: RemixiconComponentType;
     color: string;
-}
+};
 
 const icons: Record<string, DocumentCardIcon> = {
     "application/pdf": {
@@ -46,7 +59,6 @@ const icons: Record<string, DocumentCardIcon> = {
 };
 
 export function DocumentCard({ document }: DocumentCardProps) {
-
     const Icon = icons[document.fileType as keyof typeof icons].icon;
     const color = icons[document.fileType as keyof typeof icons].color;
 
@@ -66,10 +78,16 @@ export function DocumentCard({ document }: DocumentCardProps) {
                             {document.title}
                         </CardTitle>
                         <CardDescription className="text-sm text-muted-foreground">
-                            {formatFileSize(document.fileSize)} • {document.fileType}
+                            {formatFileSize(document.fileSize)} •{" "}
+                            {document.fileType}
                         </CardDescription>
                     </div>
-                    <Icon className={cn("size-5 text-muted-foreground flex-shrink-0", color)} />
+                    <Icon
+                        className={cn(
+                            "size-5 text-muted-foreground flex-shrink-0",
+                            color
+                        )}
+                    />
                 </div>
             </CardHeader>
             <CardContent>
@@ -80,7 +98,11 @@ export function DocumentCard({ document }: DocumentCardProps) {
             <CardFooter className="mt-auto">
                 <div className="flex items-center justify-between w-full">
                     <span className="text-xs text-muted-foreground">
-                        Ajouté {formatDistanceToNow(new Date(document.createdAt), { addSuffix: true, locale: fr })}
+                        Ajouté{" "}
+                        {formatDistanceToNow(new Date(document.createdAt), {
+                            addSuffix: true,
+                            locale: fr,
+                        })}
                     </span>
                     <Button variant="ghost" size="default" asChild>
                         <Link href={document.fileUrl} target="_blank">
@@ -92,4 +114,4 @@ export function DocumentCard({ document }: DocumentCardProps) {
             </CardFooter>
         </Card>
     );
-} 
+}
