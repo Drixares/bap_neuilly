@@ -1,8 +1,10 @@
 "use server";
 
+import SendEmail, { resend } from "@/app/api/send";
 import { ExcelRowSchema } from "@/app/schema";
 import { db } from "@/db"; // Import de la connexion à la DB
 import { user } from "@/db/schema/auth-schema"; // Table Drizzle
+import { EmailTemplate } from "@/email/template-email";
 import { findColumn } from "@/lib/utils";
 import { ExcelRow, ProcessedUserData } from "@/types/excel-import";
 import { read, utils } from "xlsx";
@@ -106,6 +108,13 @@ export async function importFileAction(formData: FormData) {
           errors 
         };
       }
+
+      await Promise.all(
+        processedData.map(async (user) => {
+          return await SendEmail({ email: user.email, name: user.name });
+        })
+      );
+
   
       // Insert users into the database
       await db.insert(user).values(processedData);

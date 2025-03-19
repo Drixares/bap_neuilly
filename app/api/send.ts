@@ -1,15 +1,15 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { EmailTemplate } from '../email/template-email';
+import { EmailTemplate } from '../../email/template-email';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+export const resend = new Resend(process.env.RESEND_API_KEY);
 
 interface SendEmailParams {
     email: string;
     name: string;
   }
 
-export default async function ({ email, name }: SendEmailParams) {
+export default async function SendEmail({ email, name }: SendEmailParams) {
+
     try{
         const { data, error } = await resend.emails.send({
             from: 'Acme <onboarding@resend.dev>',
@@ -25,5 +25,4 @@ export default async function ({ email, name }: SendEmailParams) {
     } catch (error) {
         return { success: false, error, data: null };
     }
-
 };
