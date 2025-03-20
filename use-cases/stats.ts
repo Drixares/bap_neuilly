@@ -1,8 +1,8 @@
 import { db } from "@/db";
 import { user } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { getNumberOfDocuments } from "./documents";
-import { getNumberOfRequests } from "./requests";
+import { getNumberOfDocuments } from "../data-access/documents";
+import { getNumberOfRequests } from "../data-access/requests";
 
 export async function getStats() {
     const numberCreators = await db

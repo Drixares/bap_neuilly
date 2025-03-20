@@ -1,3 +1,5 @@
+import "server-only";
+
 import { db } from "@/db";
 import { NewRequest, request, requestStatusEnum } from "@/db/schema/auth-schema";
 import { count, eq } from "drizzle-orm";

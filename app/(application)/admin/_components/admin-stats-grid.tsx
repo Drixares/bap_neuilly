@@ -1,5 +1,5 @@
 import { StatsGrid } from "@/components/stats-grid";
-import { getStats } from "@/data-access/stats";
+import { getStats } from "@/use-cases/stats";
 import {
     RiFileTextLine,
     RiQuestionnaireFill,
