@@ -1,4 +1,7 @@
-import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { boolean, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+
+const demandeStatus = pgEnum("demande_status", ["en cours", "validée", "rejetée"]);
 
 export const user = pgTable("user", {
     id: text("id").primaryKey(),
@@ -83,6 +86,29 @@ export const document = pgTable("document", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+export const request = pgTable("request", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => user.id, { onDelete: "cascade" }),
+    comment: text("comment"),
+    status: demandeStatus("status").default("en cours").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Define relations
+export const userRelations = relations(user, ({ many }) => ({
+    requests: many(request),
+}));
+
+export const requestRelations = relations(request, ({ one }) => ({
+    user: one(user, {
+        fields: [request.userId],
+        references: [user.id],
+    }),
+}));
 
 export type BusinessInfo = typeof businessInfo.$inferSelect;
 export type NewBusinessInfo = typeof businessInfo.$inferInsert;
