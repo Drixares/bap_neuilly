@@ -70,7 +70,7 @@ export function CreatorCard({ creator }: CreatorCardProps) {
                     <div className="flex items-center gap-2 text-sm">
                         <Phone className="h-4 w-4 text-muted-foreground" />
                         <span>
-                            +33 {formatPhoneNumber(creator.businessInfo.phone)}
+                            {formatPhoneNumber("0" + creator.businessInfo.phone)}
                         </span>
                     </div>
                 )}
