@@ -12,7 +12,6 @@ export const user = pgTable("user", {
     banned: boolean("banned"),
     banReason: text("ban_reason"),
     banExpires: timestamp("ban_expires"),
-    businessInfoId: uuid("business_info_id").references(() => businessInfo.id),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
