@@ -1,8 +1,8 @@
 import { relations } from "drizzle-orm";
 import { boolean, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
-export const requestStatusEnum = pgEnum("request_status", ["en cours", "validée", "rejetée"]);
 
+export const requestStatusEnum = pgEnum("request_status", ["en cours", "validée", "rejetée"]);
 export const user = pgTable("user", {
     id: text("id").primaryKey(),
     name: text("name").notNull(),
@@ -15,15 +15,19 @@ export const user = pgTable("user", {
     banned: boolean("banned"),
     banReason: text("ban_reason"),
     banExpires: timestamp("ban_expires"),
-    businessInfoId: uuid("business_info_id").references(() => businessInfo.id),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const businessInfo = pgTable("business_info", {
     id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull().unique().references(() => user.id, { 
+        onDelete: "cascade" 
+    }),
     companyName: text("company_name").notNull(),
+    siretNum: text("siret_number"),
     businessDescription: text("business_description"),
+    productTypes: text("product_types").notNull(),
     registrationNumber: text("registration_number"),
     phone: text("phone").notNull(),
     website: text("website"),
@@ -99,8 +103,12 @@ export const request = pgTable("request", {
 });
 
 // Define relations
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({ many, one }) => ({
     requests: many(request),
+    businessInfo: one(businessInfo, {
+        fields: [user.id],
+        references: [businessInfo.userId],
+    }),
 }));
 
 export const requestRelations = relations(request, ({ one }) => ({
@@ -109,6 +117,13 @@ export const requestRelations = relations(request, ({ one }) => ({
         references: [user.id],
     }),
 }));
+  
+  export const businessInfoRelations = relations(businessInfo, ({ one }) => ({
+    user: one(user, {
+      fields: [businessInfo.userId],
+      references: [user.id],
+    }),
+  }));
 
 export type BusinessInfo = typeof businessInfo.$inferSelect;
 export type NewBusinessInfo = typeof businessInfo.$inferInsert;
