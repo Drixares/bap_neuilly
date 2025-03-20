@@ -56,9 +56,11 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
+import FormUpdateArtisans from "./form-update-artisans";
 import { User } from "better-auth";
 import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
+import { Dialog, DialogHeader, DialogTitle, DialogContent } from "@/components/ui/dialog";
 
 interface GetColumnsProps {
     data: User[];
@@ -430,6 +432,7 @@ function RowActions({
 }) {
     const [isUpdatePending, startUpdateTransition] = useTransition();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [showUpdateDialog, setShowUpdateDialog] = useState(false);
 
     const handleDelete = () => {
         startUpdateTransition(async () => {
@@ -476,6 +479,13 @@ function RowActions({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-auto">
                     <DropdownMenuItem
+                        onClick={() => setShowUpdateDialog(true)}
+                        variant="default"
+                        className="dark:data-[variant=destructive]:focus:bg-destructive/10"
+                    >
+                        Modifier le créateur
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
                         onClick={() => setShowDeleteDialog(true)}
                         variant="destructive"
                         className="dark:data-[variant=destructive]:focus:bg-destructive/10"
@@ -484,6 +494,17 @@ function RowActions({
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
+            <Dialog
+                open={showUpdateDialog}
+                onOpenChange={setShowUpdateDialog}
+            >
+                <DialogContent className="w-[80%] max-w-2xl ">
+                    <DialogHeader>
+                        <DialogTitle>Modifier le créateur</DialogTitle>
+                    </DialogHeader>
+                        <FormUpdateArtisans artisanId={item.id}/>
+                </DialogContent>
+            </Dialog>
 
             <AlertDialog
                 open={showDeleteDialog}

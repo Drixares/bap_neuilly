@@ -1,4 +1,5 @@
 import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { relations } from 'drizzle-orm';
 
 export const user = pgTable("user", {
     id: text("id").primaryKey(),
@@ -18,8 +19,13 @@ export const user = pgTable("user", {
 
 export const businessInfo = pgTable("business_info", {
     id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull().unique().references(() => user.id, { 
+        onDelete: "cascade" 
+    }),
     companyName: text("company_name").notNull(),
+    siretNum: text("siret_number"),
     businessDescription: text("business_description"),
+    productTypes: text("product_types").notNull(),
     registrationNumber: text("registration_number"),
     phone: text("phone").notNull(),
     website: text("website"),
@@ -83,9 +89,21 @@ export const document = pgTable("document", {
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const userRelations = relations(user, ({ one }) => ({
+    businessInfo: one(businessInfo, {
+      fields: [user.id],
+      references: [businessInfo.userId],
+    }),
+  }));
+  
+  export const businessInfoRelations = relations(businessInfo, ({ one }) => ({
+    user: one(user, {
+      fields: [businessInfo.userId],
+      references: [user.id],
+    }),
+  }));
+
 export type BusinessInfo = typeof businessInfo.$inferSelect;
 export type NewBusinessInfo = typeof businessInfo.$inferInsert;
 export type User = typeof user.$inferSelect;
 export type NewUser = typeof user.$inferInsert;
-export type Document = typeof document.$inferSelect;
-export type NewDocument = typeof document.$inferInsert;
