@@ -21,25 +21,37 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import { formatPhoneNumber } from "@/lib/utils";
 import { Creator } from "@/types/creator";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { RiNumber0 } from "@remixicon/react";
 import {
     Building2,
     Link as LinkIcon,
+    Loader2,
     Mail,
     Pencil,
     Phone,
+    Text,
     User,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { UseFormReturn, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
+import { useServerAction } from "zsa-react";
+import { updateCreatorAction } from "../actions";
 
 const formSchema = z.object({
     name: z.string().min(1),
-    companyName: z.string().min(1),
+    email: z.string().email(),
     phone: z.string().min(1),
+    bio: z.string().optional(),
+    companyName: z.string().min(1),
+    businessDescription: z.string().optional(),
+    siretNum: z.string().optional(),
     website: z.string().optional(),
 });
 
@@ -62,6 +74,46 @@ function PersonalInfoTab({ form }: { form: UseFormReturn<FormValues> }) {
                     </FormItem>
                 )}
             />
+            <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                            <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Téléphone</FormLabel>
+                        <FormControl>
+                            <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="bio"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Biographie</FormLabel>
+                        <FormControl>
+                            <Textarea {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+
         </TabsContent>
     );
 }
@@ -85,19 +137,6 @@ function BusinessInfoTab({ form }: { form: UseFormReturn<FormValues> }) {
             />
             <FormField
                 control={form.control}
-                name="phone"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Téléphone</FormLabel>
-                        <FormControl>
-                            <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={form.control}
                 name="website"
                 render={({ field }) => (
                     <FormItem>
@@ -109,6 +148,34 @@ function BusinessInfoTab({ form }: { form: UseFormReturn<FormValues> }) {
                     </FormItem>
                 )}
             />
+            <FormField
+                control={form.control}
+                name="siretNum"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Numéro de SIRET</FormLabel>
+                        <FormControl>
+                            <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="businessDescription"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Description de l'entreprise</FormLabel>
+                        <FormControl>
+                            <Textarea {...field} className="resize-none" />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            
+            
         </TabsContent>
     );
 }
@@ -178,6 +245,20 @@ function ContactInfo({
                     </Link>
                 </div>
             )}
+
+            {form.watch("siretNum") && (
+                <div className="flex items-center gap-2 text-sm">
+                    <RiNumber0 className="size-4 shrink-0" />
+                    <span>{form.watch("siretNum")}</span>
+                </div>
+            )}
+
+            {form.watch("businessDescription") && (
+                <div className="flex items-center gap-2 text-sm">
+                    <Text className="size-4 shrink-0" />
+                    <p className="break-all whitespace-pre-wrap">{form.watch("businessDescription")}</p>
+                </div>
+            )}
         </div>
     );
 }
@@ -186,9 +267,11 @@ function ContactInfo({
 function UpdateForm({
     form,
     onSubmit,
+    isPending,
 }: {
     form: UseFormReturn<FormValues>;
     onSubmit: (values: FormValues) => void;
+    isPending: boolean;
 }) {
     return (
         <Form {...form}>
@@ -202,22 +285,32 @@ function UpdateForm({
                             value="personal"
                             className="flex items-center gap-2"
                         >
-                            <User className="h-4 w-4" />
+                            <User className="size-4" />
                             Personnel
                         </TabsTrigger>
                         <TabsTrigger
                             value="business"
                             className="flex items-center gap-2"
                         >
-                            <Building2 className="h-4 w-4" />
+                            <Building2 className="size-4" />
                             Entreprise
                         </TabsTrigger>
                     </TabsList>
                     <PersonalInfoTab form={form} />
                     <BusinessInfoTab form={form} />
                 </Tabs>
-                <Button type="submit" className="w-full">
-                    Sauvegarder
+                <Button type="submit" className="w-full" disabled={isPending}>
+                    {isPending 
+                        ? (
+                            <>
+                                <Loader2 className="size-4 mr-2 animate-spin" />
+                                Sauvegarde en cours...
+                            </>
+                        )
+                        : (
+                            "Sauvegarder"
+                        )
+                    }
                 </Button>
             </form>
         </Form>
@@ -251,18 +344,44 @@ function Preview({
 
 // Composant principal
 export function UpdateCreatorDialog({ creator }: { creator: Creator }) {
+
+    const router = useRouter();
+
+    const { execute, isPending } = useServerAction(updateCreatorAction, {
+        onSuccess: () => {
+            toast.success("Créateur mis à jour avec succès", {
+                position: "top-center",
+            });
+            router.refresh();
+        },
+        onError: (error) => {
+            toast.error(error.err.message, {
+                position: "top-center",
+            });
+        },
+    });
+    
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: creator.name,
-            companyName: creator.businessInfo?.companyName,
+            email: creator.email,
             phone: creator.businessInfo?.phone,
+            companyName: creator.businessInfo?.companyName,
+            siretNum: creator.businessInfo?.siretNum || "",
             website: creator.businessInfo?.website || "",
+            businessDescription:
+                creator.businessInfo?.businessDescription || "",
         },
     });
 
-    const onSubmit = (values: FormValues) => {
-        console.log(values);
+    const onSubmit = async (values: FormValues) => {
+        await execute({
+            id: creator.id,
+            ...values,
+            siretNum: values.siretNum || "",
+            businessDescription: values.businessDescription || "",
+        });
     };
 
     const initials = creator.name
@@ -287,7 +406,7 @@ export function UpdateCreatorDialog({ creator }: { creator: Creator }) {
                 </DialogHeader>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     <div className="space-y-3 md:space-y-4">
-                        <UpdateForm form={form} onSubmit={onSubmit} />
+                        <UpdateForm form={form} onSubmit={onSubmit} isPending={isPending} />
                     </div>
                     <Preview
                         form={form}

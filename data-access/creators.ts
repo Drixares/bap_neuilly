@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "@/db";
-import { businessInfo, user } from "@/db/schema";
+import { BusinessInfo, businessInfo, User, user } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function getCreators() {
@@ -42,4 +42,26 @@ export const getCreatorById = async (id: string) => {
 export const getCreatorByEmail = async (email: string) => {
     const creator = await db.select().from(user).where(eq(user.email, email));
     return creator;
+};
+
+export const updateCreator = async (id: string, data: Partial<User>) => {
+    await db.update(user).set(data).where(eq(user.id, id));
+};
+
+export const updateBusinessInfo = async (id: string, data: Partial<BusinessInfo>) => {
+    await db.update(businessInfo).set(data).where(eq(businessInfo.userId, id));
+};
+
+export const updateCreatorAndBusinessInfo = async (id: string, data: Partial<User & BusinessInfo>) => {
+    const { companyName, businessDescription, siretNum, ...rest } = data;
+    
+    try {
+        await db.update(user).set(rest).where(eq(user.id, id));
+        await db.update(businessInfo).set({ companyName, businessDescription, siretNum }).where(eq(businessInfo.userId, id));
+
+        return true;
+    } catch (error) {
+        console.error("Error updating creator", error);
+        return false;
+    }
 };
