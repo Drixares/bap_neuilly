@@ -92,7 +92,7 @@ export const request = pgTable("request", {
     userId: text("user_id")
         .notNull()
         .references(() => user.id, { onDelete: "cascade" }),
-    comment: text("comment"),
+    content: text("content").notNull(),
     status: requestStatusEnum("status").default("en cours").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -116,3 +116,5 @@ export type User = typeof user.$inferSelect;
 export type NewUser = typeof user.$inferInsert;
 export type Document = typeof document.$inferSelect;
 export type NewDocument = typeof document.$inferInsert;
+export type Request = typeof request.$inferSelect;
+export type NewRequest = typeof request.$inferInsert;

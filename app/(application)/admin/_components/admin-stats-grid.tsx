@@ -33,7 +33,7 @@ export default async function AdminStatsGrid() {
                 },
                 {
                     title: "Demandes en attente",
-                    value: "5",
+                    value: stats.numberRequests.toString(),
                     href: "/admin/demandes",
                     icon: RiQuestionnaireFill,
                 },
