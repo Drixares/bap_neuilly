@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { UpdateBusinessAction } from "@/actions/update-business";
 import { getBusinessInfoByArtisanId } from "@/actions/fetch-business-data";
@@ -10,15 +10,19 @@ interface BusinessInfo {
     companyName: string;
     siretNum: string | null;
     productTypes: string;
-    businessDescription?: string | null;  
-    registrationNumber?: string | null;   
+    businessDescription?: string | null;
+    registrationNumber?: string | null;
     phone: string;
-    website?: string | null;              
+    website?: string | null;
     createdAt: Date;
     updatedAt: Date;
-  }
+}
 
-export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) {
+export default function FormUpdateArtisans({
+    artisanId,
+}: {
+    artisanId: string;
+}) {
     const [businessInfo, setBusinessInfo] = useState<BusinessInfo | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -29,17 +33,15 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
         productTypes: "",
         businessDescription: "",
         phone: "",
-        website: ""
+        website: "",
     });
 
     const [updateStatus, setUpdateStatus] = useState({
         message: "",
-        isError: false
+        isError: false,
     });
 
-
     useEffect(() => {
-
         if (!artisanId) {
             console.error("artisanId manquant");
             setError("ID d'artisan manquant ou invalide");
@@ -50,10 +52,10 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
             try {
                 setLoading(true);
                 setError(null);
-                
+
                 const business = await getBusinessInfoByArtisanId(artisanId);
                 console.log("Données business récupérées:", business);
-                
+
                 if (business) {
                     setBusinessInfo(business);
                     setFormData({
@@ -62,15 +64,21 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
                         productTypes: business.productTypes || "",
                         businessDescription: business.businessDescription || "",
                         phone: business.phone || "",
-                        website: business.website || ""
-
+                        website: business.website || "",
                     });
                 } else {
-                    setError("Aucune information d'entreprise trouvée pour cet artisan");
+                    setError(
+                        "Aucune information d'entreprise trouvée pour cet artisan"
+                    );
                 }
             } catch (err) {
-                console.error("Erreur lors de la récupération des données:", err);
-                setError("Erreur lors de la récupération des informations d'entreprise");
+                console.error(
+                    "Erreur lors de la récupération des données:",
+                    err
+                );
+                setError(
+                    "Erreur lors de la récupération des informations d'entreprise"
+                );
             } finally {
                 setLoading(false);
             }
@@ -84,7 +92,7 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value
+            [e.target.name]: e.target.value,
         });
     };
 
@@ -95,7 +103,7 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
             if (!businessInfo || !businessInfo.id) {
                 setUpdateStatus({
                     message: "Informations d'entreprise non disponibles",
-                    isError: true
+                    isError: true,
                 });
                 return;
             }
@@ -112,26 +120,32 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
 
             setUpdateStatus({
                 message: "Informations mises à jour avec succès",
-                isError: false
+                isError: false,
             });
         } catch (error) {
             console.error("Erreur lors de la mise à jour:", error);
             setUpdateStatus({
                 message: "Échec de la mise à jour",
-                isError: true
+                isError: true,
             });
         }
-    }
+    };
 
     if (loading) {
-        return <div className="flex justify-center p-4">Chargement des informations...</div>;
+        return (
+            <div className="flex justify-center p-4">
+                Chargement des informations...
+            </div>
+        );
     }
 
     if (error) {
         return (
             <div className="p-4">
-                <div className="bg-red-100 text-red-800 p-4 rounded mb-4">{error}</div>
-                <Button 
+                <div className="bg-red-100 text-red-800 p-4 rounded mb-4">
+                    {error}
+                </div>
+                <Button
                     onClick={() => setError(null)}
                     className="bg-primary/90 hover:bg-primary"
                 >
@@ -144,7 +158,9 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
     return (
         <form className="flex flex-col mt-8 gap-8" onSubmit={handleSubmit}>
             {updateStatus.message && (
-                <div className={`p-2 rounded ${updateStatus.isError ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                <div
+                    className={`p-2 rounded ${updateStatus.isError ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}
+                >
                     {updateStatus.message}
                 </div>
             )}
@@ -215,7 +231,7 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
             <div>
                 <label>Site Internet</label>
                 <input
-                type="text"
+                    type="text"
                     name="website"
                     id="website"
                     placeholder="Site internet de l'entreprise"
@@ -233,5 +249,5 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
                 </Button>
             </div>
         </form>
-    )
+    );
 }

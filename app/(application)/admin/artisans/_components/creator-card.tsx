@@ -7,9 +7,11 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { formatPhoneNumber } from "@/lib/utils";
 import { CreatorCardProps } from "@/types/creator";
-import { Building2, Link as LinkIcon, Mail, Pencil, Phone } from "lucide-react";
+import { Building2, Link as LinkIcon, Mail, Phone } from "lucide-react";
 import Link from "next/link";
+import { UpdateCreatorDialog } from "./update-creator-dialog";
 
 export function CreatorCard({ creator }: CreatorCardProps) {
     const initials = creator.name
@@ -39,29 +41,23 @@ export function CreatorCard({ creator }: CreatorCardProps) {
                     </div>
                 </div>
                 <div className="flex items-center">
+                    <UpdateCreatorDialog creator={creator} />
                     <CardAction>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="cursor-pointer"
-                        >
-                            <Pencil className="size-4" />
-                        </Button>
-                    </CardAction>
-                    <CardAction>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="cursor-pointer"
-                            asChild
-                        >
-                            <Link
-                                href={creator.businessInfo?.website || ""}
-                                target="_blank"
+                        {creator.businessInfo?.website && (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="cursor-pointer"
+                                asChild
                             >
-                                <LinkIcon className="size-4" />
-                            </Link>
-                        </Button>
+                                <Link
+                                    href={creator.businessInfo.website}
+                                    target="_blank"
+                                >
+                                    <LinkIcon className="size-4" />
+                                </Link>
+                            </Button>
+                        )}
                     </CardAction>
                 </div>
             </CardHeader>
@@ -73,7 +69,9 @@ export function CreatorCard({ creator }: CreatorCardProps) {
                 {creator.businessInfo?.phone && (
                     <div className="flex items-center gap-2 text-sm">
                         <Phone className="h-4 w-4 text-muted-foreground" />
-                        <span>{creator.businessInfo.phone}</span>
+                        <span>
+                            {formatPhoneNumber("0" + creator.businessInfo.phone)}
+                        </span>
                     </div>
                 )}
                 {creator.bio && (

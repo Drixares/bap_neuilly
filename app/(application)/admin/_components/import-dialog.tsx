@@ -51,7 +51,7 @@ export function ImportDialog({
     ],
 }: ImportDialogProps) {
     const [isUploading, setIsUploading] = useState(false);
-    const router = useRouter()
+    const router = useRouter();
 
     const form = useForm<UploadFormValues>({
         resolver: zodResolver(uploadFormSchema),
@@ -81,12 +81,16 @@ export function ImportDialog({
     const onSubmit = async (values: UploadFormValues) => {
         try {
             setIsUploading(true);
-            
+
             const formData = new FormData();
             formData.append("file", values.file);
             const [data, error] = await importFileAction({ file: values.file });
 
-            if (error) throw new Error(error?.message ?? "Une erreur s'est produite lors de l'importation");
+            if (error)
+                throw new Error(
+                    error?.message ??
+                        "Une erreur s'est produite lors de l'importation"
+                );
 
             if (!data?.success) {
                 toast.error("Une erreur s'est produite lors de l'importation", {
@@ -101,9 +105,14 @@ export function ImportDialog({
             router.refresh();
             handleClose();
         } catch (error) {
-            toast.error(error instanceof Error ? error.message : "Une erreur s'est produite lors de l'importation", {
-                position: "top-center",
-            });
+            toast.error(
+                error instanceof Error
+                    ? error.message
+                    : "Une erreur s'est produite lors de l'importation",
+                {
+                    position: "top-center",
+                }
+            );
         } finally {
             setIsUploading(false);
         }

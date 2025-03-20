@@ -12,7 +12,8 @@ export async function UpdateBusinessAction(
     businessDescription?: string,
     website?: string
 ) {
-    const result = await db.update(businessInfo)
+    const result = await db
+        .update(businessInfo)
         .set({
             companyName,
             siretNum,

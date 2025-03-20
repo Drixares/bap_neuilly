@@ -15,10 +15,10 @@ export async function getDocumentById(id: string) {
 }
 
 export async function getNumberOfDocuments() {
-    const numberOfDocuments = await db.select({
-        count: count(),
-    }).from(document);
+    const numberOfDocuments = await db
+        .select({
+            count: count(),
+        })
+        .from(document);
     return numberOfDocuments[0].count;
 }
-
-
