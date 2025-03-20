@@ -13,16 +13,24 @@ import { z } from "zod";
 export async function importFileAction(formData: FormData) {
     const file = formData.get("file") as File;
 
+
     if (!file) {
         return { success: false, message: "Aucun fichier reçu." };
+        return { success: false, message: "Aucun fichier reçu." };
     }
+
 
     if (!file.name.match(/\.(xlsx|xls)$/i)) {
         return {
             success: false,
             message: "Le fichier doit être au format Excel (.xlsx ou .xls)",
         };
+        return {
+            success: false,
+            message: "Le fichier doit être au format Excel (.xlsx ou .xls)",
+        };
     }
+
 
     try {
         const buffer = await file.arrayBuffer();
