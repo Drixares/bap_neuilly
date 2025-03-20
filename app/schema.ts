@@ -29,3 +29,14 @@ export const ProcessedUserSchema = z.object({
     role: z.enum(["user", "artisan", "admin"]),
     bio: z.string().optional(),
 });
+
+export const ProcessedBusinessSchema = z.object({
+    id: z.string().uuid(),
+    userId: z.string().uuid(),
+    companyName: z.string().min(1),
+    siretNum: z.string().min(1).optional(),
+    productTypes: z.string().min(1),
+    businessDescription: z.string().optional(),
+    phone: z.string().min(1),
+    website: z.string().optional(),
+});
