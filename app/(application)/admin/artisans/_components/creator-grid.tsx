@@ -1,8 +1,8 @@
-import { getCreatorsWithBusinessInfo } from "@/data-access/creators";
+import { getCreatorsWithBusinessInfoUseCase } from "@/use-cases/creators";
 import { CreatorCard } from "./creator-card";
 
 export async function CreatorGrid() {
-    const creators = await getCreatorsWithBusinessInfo();
+    const creators = await getCreatorsWithBusinessInfoUseCase();
 
     if (creators.length === 0) {
         return (

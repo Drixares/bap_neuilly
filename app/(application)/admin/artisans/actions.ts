@@ -9,6 +9,7 @@ const formSchema = z.object({
     name: z.string().min(1),
     email: z.string().email(),
     phone: z.string().min(1),
+    bio: z.string().min(1),
     siretNum: z.string().min(1),
     businessDescription: z.string().min(1),
     companyName: z.string().min(1),
@@ -17,6 +18,6 @@ const formSchema = z.object({
 export const updateCreatorAction = createServerAction()
     .input(formSchema)
     .handler(async ({ input }) => {
-        const isUpdated = await updateCreatorUseCase(input.id, input);    
+        const isUpdated = await updateCreatorUseCase(input.id, input);
         return isUpdated;
-    })
+    });

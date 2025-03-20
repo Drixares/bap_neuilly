@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { File as FileIcon, Upload, X } from "lucide-react";
+import { File as FileIcon, Loader2, Upload, X } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
@@ -241,7 +241,14 @@ export function UploadDialog({
                                     !form.formState.isValid || isUploading
                                 }
                             >
-                                {isUploading ? "Envoi en cours..." : "Envoyer"}
+                                {isUploading ? (
+                                    <>
+                                        <Loader2 className="size-4 animate-spin" />
+                                        Envoi en cours...
+                                    </>
+                                ) : (
+                                    "Envoyer"
+                                )}
                             </Button>
                         </DialogFooter>
                     </form>
