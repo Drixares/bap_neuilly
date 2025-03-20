@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { boolean, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
-const demandeStatus = pgEnum("demande_status", ["en cours", "validée", "rejetée"]);
+export const requestStatusEnum = pgEnum("request_status", ["en cours", "validée", "rejetée"]);
 
 export const user = pgTable("user", {
     id: text("id").primaryKey(),
@@ -93,7 +93,7 @@ export const request = pgTable("request", {
         .notNull()
         .references(() => user.id, { onDelete: "cascade" }),
     comment: text("comment"),
-    status: demandeStatus("status").default("en cours").notNull(),
+    status: requestStatusEnum("status").default("en cours").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
