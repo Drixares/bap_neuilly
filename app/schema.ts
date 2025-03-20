@@ -30,7 +30,6 @@ export const ProcessedUserSchema = z.object({
     bio: z.string().optional(),
 });
 
-
 export const ProcessedBusinessSchema = z.object({
     id: z.string().uuid(),
     userId: z.string().uuid(),

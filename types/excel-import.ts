@@ -1,4 +1,4 @@
-import { ProcessedUserSchema, ProcessedBusinessSchema } from "@/app/schema";
+import { ProcessedBusinessSchema, ProcessedUserSchema } from "@/app/schema";
 import { z } from "zod";
 
 export type ProcessedUserData = z.infer<typeof ProcessedUserSchema>;

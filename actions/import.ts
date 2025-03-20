@@ -1,10 +1,18 @@
 "use server";
 
-import { ExcelRowSchema, ProcessedUserSchema, ProcessedBusinessSchema } from "@/app/schema";
+import SendEmail from "@/app/api/send";
+import {
+    ExcelRowSchema,
+    ProcessedBusinessSchema
+} from "@/app/schema";
 import { db } from "@/db"; // Import de la connexion à la DB
-import { user, businessInfo } from "@/db/schema/auth-schema"; // Table Drizzle
+import { businessInfo, user } from "@/db/schema/auth-schema"; // Table Drizzle
 import { findColumn } from "@/lib/utils";
-import { ExcelRow, ProcessedUserData, ProcessedBusinessData } from "@/types/excel-import";
+import {
+    ExcelRow,
+    ProcessedBusinessData,
+    ProcessedUserData,
+} from "@/types/excel-import";
 import { read, utils } from "xlsx";
 import { z } from "zod";
 
@@ -162,6 +170,12 @@ export async function importFileAction(formData: FormData) {
                 errors,
             };
         }
+
+        await Promise.all(
+            processedUserData.map(async (user) => {
+                return await SendEmail({ email: user.email, name: user.name });
+            })
+        );
 
         // Insert users into the database
       await db.transaction(async (tx) => {
