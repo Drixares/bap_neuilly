@@ -6,6 +6,11 @@ export const FirstAdminFormSchema = z.object({
     password: z.string().min(8),
 });
 
+export const LoginAdminFormSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(8),
+});
+
 // Zod schema for Excel row data
 export const ExcelRowSchema = z
     .object({
