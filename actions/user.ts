@@ -8,7 +8,7 @@ import {
     FirstAdminFormResponse,
     FirstAdminSchemaType,
 } from "@/types/admin-form";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 export async function createFirstAdminUser(
     data: FirstAdminSchemaType
@@ -39,5 +39,22 @@ export async function createFirstAdminUser(
     } catch (error) {
         console.error(error);
         return { success: false, message: "User creation failed" };
+    }
+}
+
+export async function deleteUsers(ids: string[]) {
+    try {
+        await db.delete(user).where(inArray(user.id, ids));
+
+        return {
+            success: true,
+            message: "Users deleted successfully",
+        };
+    } catch (error) {
+        console.error(error);
+        return {
+            success: false,
+            message: "Users deletion failed",
+        };
     }
 }
