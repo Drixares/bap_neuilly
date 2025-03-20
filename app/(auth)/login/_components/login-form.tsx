@@ -64,7 +64,6 @@ export default function LoginForm({
                 );
             }
             router.refresh();
-
         } catch (error) {
             toast.error("Une erreur est survenue lors de la connexion", {
                 position: "top-center",

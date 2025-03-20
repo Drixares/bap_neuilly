@@ -1,11 +1,9 @@
-import { Creator } from "@/types/creator";
+import { getCreatorsWithBusinessInfo } from "@/data-access/creators";
 import { CreatorCard } from "./creator-card";
 
-interface CreatorGridProps {
-    creators: Creator[];
-}
+export async function CreatorGrid() {
+    const creators = await getCreatorsWithBusinessInfo();
 
-export function CreatorGrid({ creators }: CreatorGridProps) {
     if (creators.length === 0) {
         return (
             <div className="text-center py-8 text-muted-foreground">

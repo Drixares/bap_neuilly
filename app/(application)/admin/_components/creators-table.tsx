@@ -15,6 +15,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -56,11 +62,10 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import FormUpdateArtisans from "./form-update-artisans";
 import { User } from "better-auth";
 import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
-import { Dialog, DialogHeader, DialogTitle, DialogContent } from "@/components/ui/dialog";
+import FormUpdateArtisans from "./form-update-artisans";
 
 interface GetColumnsProps {
     data: User[];
@@ -494,15 +499,12 @@ function RowActions({
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-            <Dialog
-                open={showUpdateDialog}
-                onOpenChange={setShowUpdateDialog}
-            >
+            <Dialog open={showUpdateDialog} onOpenChange={setShowUpdateDialog}>
                 <DialogContent className="w-[80%] max-w-2xl ">
                     <DialogHeader>
                         <DialogTitle>Modifier le créateur</DialogTitle>
                     </DialogHeader>
-                        <FormUpdateArtisans artisanId={item.id}/>
+                    <FormUpdateArtisans artisanId={item.id} />
                 </DialogContent>
             </Dialog>
 

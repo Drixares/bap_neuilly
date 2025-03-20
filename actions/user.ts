@@ -27,12 +27,11 @@ export const createFirstAdminUser = createServerAction()
                 .where(eq(user.email, input.email));
 
             return { success: true, message: "User created successfully" };
-            
         } catch (error) {
             console.error(error);
             return { success: false, message: "User creation failed" };
         }
-    })
+    });
 
 export async function deleteUsers(ids: string[]) {
     try {

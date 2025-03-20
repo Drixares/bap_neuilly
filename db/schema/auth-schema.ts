@@ -1,8 +1,18 @@
 import { relations } from "drizzle-orm";
-import { boolean, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+    boolean,
+    pgEnum,
+    pgTable,
+    text,
+    timestamp,
+    uuid,
+} from "drizzle-orm/pg-core";
 
-
-export const requestStatusEnum = pgEnum("request_status", ["en cours", "validée", "rejetée"]);
+export const requestStatusEnum = pgEnum("request_status", [
+    "en cours",
+    "validée",
+    "rejetée",
+]);
 export const user = pgTable("user", {
     id: text("id").primaryKey(),
     name: text("name").notNull(),
@@ -21,9 +31,12 @@ export const user = pgTable("user", {
 
 export const businessInfo = pgTable("business_info", {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: text("user_id").notNull().unique().references(() => user.id, { 
-        onDelete: "cascade" 
-    }),
+    userId: text("user_id")
+        .notNull()
+        .unique()
+        .references(() => user.id, {
+            onDelete: "cascade",
+        }),
     companyName: text("company_name").notNull(),
     siretNum: text("siret_number"),
     businessDescription: text("business_description"),
@@ -117,13 +130,13 @@ export const requestRelations = relations(request, ({ one }) => ({
         references: [user.id],
     }),
 }));
-  
-  export const businessInfoRelations = relations(businessInfo, ({ one }) => ({
+
+export const businessInfoRelations = relations(businessInfo, ({ one }) => ({
     user: one(user, {
-      fields: [businessInfo.userId],
-      references: [user.id],
+        fields: [businessInfo.userId],
+        references: [user.id],
     }),
-  }));
+}));
 
 export type BusinessInfo = typeof businessInfo.$inferSelect;
 export type NewBusinessInfo = typeof businessInfo.$inferInsert;

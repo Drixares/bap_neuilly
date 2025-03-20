@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
-
     const session = await auth.api.getSession({
         headers: await headers(),
     });
