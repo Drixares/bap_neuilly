@@ -1,4 +1,4 @@
-import { adminUserExists } from "@/data-access/admin";
+import { adminUserExistsUseCase } from "@/use-cases/admin";
 import { redirect } from "next/navigation";
 
 export default async function CreateAdminProvider({
@@ -6,7 +6,7 @@ export default async function CreateAdminProvider({
 }: {
     children: React.ReactNode;
 }) {
-    const isAdminUserExists = await adminUserExists();
+    const isAdminUserExists = await adminUserExistsUseCase();
 
     if (isAdminUserExists) {
         return redirect("/");

@@ -21,6 +21,7 @@ import { fr } from "date-fns/locale";
 import { DownloadIcon } from "lucide-react";
 import Link from "next/link";
 import { useCallback } from "react";
+import { DeleteDocumentDialog } from "./delete-document-dialog";
 
 interface DocumentCardProps {
     document: Document;
@@ -40,6 +41,10 @@ const icons: Record<string, DocumentCardIcon> = {
         icon: RiFileExcel2Fill,
         color: "text-green-400/60",
     },
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+        icon: RiFileExcel2Fill,
+        color: "text-green-400/60",
+    },
     "application/docx": {
         icon: RiFileWord2Fill,
         color: "text-blue-400/60",
@@ -56,11 +61,22 @@ const icons: Record<string, DocumentCardIcon> = {
         icon: RiFileExcel2Fill,
         color: "text-green-400/60",
     },
+    "application/msword": {
+        icon: RiFileWord2Fill,
+        color: "text-blue-400/60",
+    },
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
+        icon: RiFileWord2Fill,
+        color: "text-blue-400/60",
+    },
 };
 
 export function DocumentCard({ document }: DocumentCardProps) {
-    const Icon = icons[document.fileType as keyof typeof icons].icon;
-    const color = icons[document.fileType as keyof typeof icons].color;
+    const Icon =
+        icons[document.fileType as keyof typeof icons].icon || RiFile2Fill;
+    const color =
+        icons[document.fileType as keyof typeof icons].color ||
+        "text-muted-foreground";
 
     const formatFileSize = useCallback((size: string) => {
         const sizeNum = parseInt(size);
@@ -70,14 +86,14 @@ export function DocumentCard({ document }: DocumentCardProps) {
     }, []);
 
     return (
-        <Card className="flex flex-col h-full">
+        <Card className="flex flex-col h-full relative">
             <CardHeader>
                 <div className="flex items-start justify-between gap-1">
                     <div className="flex-1">
                         <CardTitle className="text-lg font-semibold">
                             {document.title}
                         </CardTitle>
-                        <CardDescription className="text-sm text-muted-foreground">
+                        <CardDescription className="text-sm text-muted-foreground break-all">
                             {formatFileSize(document.fileSize)} •{" "}
                             {document.fileType}
                         </CardDescription>
@@ -96,20 +112,22 @@ export function DocumentCard({ document }: DocumentCardProps) {
                 </p>
             </CardContent>
             <CardFooter className="mt-auto">
-                <div className="flex items-center justify-between w-full">
-                    <span className="text-xs text-muted-foreground">
-                        Ajouté{" "}
+                <div className="flex items-center justify-between w-full gap-2">
+                    <span className="text-xs text-muted-foreground text-balance">
+                        Ajouté il y a{" "}
                         {formatDistanceToNow(new Date(document.createdAt), {
-                            addSuffix: true,
                             locale: fr,
                         })}
                     </span>
-                    <Button variant="ghost" size="default" asChild>
-                        <Link href={document.fileUrl} target="_blank">
-                            <DownloadIcon className="size-4" />
-                            Télécharger
-                        </Link>
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm" asChild>
+                            <Link href={document.fileUrl} target="_blank">
+                                <DownloadIcon className="size-4" />
+                                Télécharger
+                            </Link>
+                        </Button>
+                        <DeleteDocumentDialog document={document} />
+                    </div>
                 </div>
             </CardFooter>
         </Card>

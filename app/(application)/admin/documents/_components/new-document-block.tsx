@@ -2,8 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { z } from "zod";
+import { useServerAction } from "zsa-react";
+import { createDocumentAction } from "../actions";
 import { UploadDialog } from "./upload-dialog";
 
 const uploadFormSchema = z.object({
@@ -18,19 +22,51 @@ const uploadFormSchema = z.object({
         .string()
         .max(500, "La description ne peut pas dépasser 500 caractères")
         .optional(),
+    fileUrl: z.string().optional(),
+    fileType: z.string().optional(),
+    fileSize: z.string().optional(),
 });
 
 type UploadFormValues = z.infer<typeof uploadFormSchema>;
 
 export default function NewDocumentBlock() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const router = useRouter();
+
+    const { execute } = useServerAction(createDocumentAction, {
+        onSuccess: () => {
+            toast.success("Document créé avec succès");
+            setIsDialogOpen(false);
+            router.refresh();
+        },
+        onError: (error) => {
+            toast.error(error.err.message);
+        },
+    });
 
     const handleUpload = async (data: UploadFormValues) => {
-        // TODO: Implement the actual upload logic here
-        // This is where you would:
-        // 1. Upload the file to MinIO
-        // 2. Create a new document record in your database
-        console.log("Uploading document:", data);
+        try {
+            // 1. Upload the file
+            const formData = new FormData();
+            formData.append("file", data.file);
+
+            const uploadResponse = await fetch("/api/upload", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!uploadResponse.ok) {
+                throw new Error("Erreur lors de l'upload du fichier");
+            }
+
+            await uploadResponse.json();
+
+            // 2. Create document record
+            await execute(data);
+        } catch (error) {
+            console.error("Upload error:", error);
+            toast.error("Erreur lors de l'upload du fichier");
+        }
     };
 
     return (

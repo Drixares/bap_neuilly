@@ -48,16 +48,25 @@ export const updateCreator = async (id: string, data: Partial<User>) => {
     await db.update(user).set(data).where(eq(user.id, id));
 };
 
-export const updateBusinessInfo = async (id: string, data: Partial<BusinessInfo>) => {
+export const updateBusinessInfo = async (
+    id: string,
+    data: Partial<BusinessInfo>
+) => {
     await db.update(businessInfo).set(data).where(eq(businessInfo.userId, id));
 };
 
-export const updateCreatorAndBusinessInfo = async (id: string, data: Partial<User & BusinessInfo>) => {
+export const updateCreatorAndBusinessInfo = async (
+    id: string,
+    data: Partial<User & BusinessInfo>
+) => {
     const { companyName, businessDescription, siretNum, ...rest } = data;
-    
+
     try {
         await db.update(user).set(rest).where(eq(user.id, id));
-        await db.update(businessInfo).set({ companyName, businessDescription, siretNum }).where(eq(businessInfo.userId, id));
+        await db
+            .update(businessInfo)
+            .set({ companyName, businessDescription, siretNum })
+            .where(eq(businessInfo.userId, id));
 
         return true;
     } catch (error) {

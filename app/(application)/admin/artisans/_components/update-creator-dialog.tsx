@@ -107,13 +107,12 @@ function PersonalInfoTab({ form }: { form: UseFormReturn<FormValues> }) {
                     <FormItem>
                         <FormLabel>Biographie</FormLabel>
                         <FormControl>
-                            <Textarea {...field} />
+                            <Textarea {...field} className="resize-none" />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
                 )}
             />
-
         </TabsContent>
     );
 }
@@ -174,8 +173,6 @@ function BusinessInfoTab({ form }: { form: UseFormReturn<FormValues> }) {
                     </FormItem>
                 )}
             />
-            
-            
         </TabsContent>
     );
 }
@@ -256,7 +253,9 @@ function ContactInfo({
             {form.watch("businessDescription") && (
                 <div className="flex items-center gap-2 text-sm">
                     <Text className="size-4 shrink-0" />
-                    <p className="break-all whitespace-pre-wrap">{form.watch("businessDescription")}</p>
+                    <p className="break-all whitespace-pre-wrap">
+                        {form.watch("businessDescription")}
+                    </p>
                 </div>
             )}
         </div>
@@ -300,17 +299,14 @@ function UpdateForm({
                     <BusinessInfoTab form={form} />
                 </Tabs>
                 <Button type="submit" className="w-full" disabled={isPending}>
-                    {isPending 
-                        ? (
-                            <>
-                                <Loader2 className="size-4 mr-2 animate-spin" />
-                                Sauvegarde en cours...
-                            </>
-                        )
-                        : (
-                            "Sauvegarder"
-                        )
-                    }
+                    {isPending ? (
+                        <>
+                            <Loader2 className="size-4 mr-2 animate-spin" />
+                            Sauvegarde en cours...
+                        </>
+                    ) : (
+                        "Sauvegarder"
+                    )}
                 </Button>
             </form>
         </Form>
@@ -344,7 +340,6 @@ function Preview({
 
 // Composant principal
 export function UpdateCreatorDialog({ creator }: { creator: Creator }) {
-
     const router = useRouter();
 
     const { execute, isPending } = useServerAction(updateCreatorAction, {
@@ -360,13 +355,14 @@ export function UpdateCreatorDialog({ creator }: { creator: Creator }) {
             });
         },
     });
-    
+
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: creator.name,
             email: creator.email,
             phone: creator.businessInfo?.phone,
+            bio: creator.bio || "",
             companyName: creator.businessInfo?.companyName,
             siretNum: creator.businessInfo?.siretNum || "",
             website: creator.businessInfo?.website || "",
@@ -379,6 +375,7 @@ export function UpdateCreatorDialog({ creator }: { creator: Creator }) {
         await execute({
             id: creator.id,
             ...values,
+            bio: values.bio || "",
             siretNum: values.siretNum || "",
             businessDescription: values.businessDescription || "",
         });
@@ -406,7 +403,11 @@ export function UpdateCreatorDialog({ creator }: { creator: Creator }) {
                 </DialogHeader>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     <div className="space-y-3 md:space-y-4">
-                        <UpdateForm form={form} onSubmit={onSubmit} isPending={isPending} />
+                        <UpdateForm
+                            form={form}
+                            onSubmit={onSubmit}
+                            isPending={isPending}
+                        />
                     </div>
                     <Preview
                         form={form}

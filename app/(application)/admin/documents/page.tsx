@@ -46,7 +46,7 @@ export default function DocumentsPage() {
                 </div>
                 <NewDocumentBlock />
             </div>
-            <DocumentGrid documents={mockDocuments} />
+            <DocumentGrid />
         </>
     );
 }
