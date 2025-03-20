@@ -1,27 +1,22 @@
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 
+import UserDropdown from "@/app/(application)/admin/_components/user-dropdown";
 import { AppSidebar } from "@/components/app-sidebar";
 import BreadcrumbComponent from "@/components/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import UserDropdown from "@/components/user-dropdown";
 import { auth } from "@/lib/auth";
 import AdminProvider from "@/providers/admin-provider";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
 export default async function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
-}) {
+}) {        
     const session = await auth.api.getSession({
         headers: await headers(),
     });
-
-    if (!session) {
-        return redirect("/");
-    }
 
     return (
         <AdminProvider>
@@ -40,9 +35,9 @@ export default async function AdminLayout({
                         <div className="flex gap-3 ml-auto">
                             {/* <FeedbackDialog /> */}
                             <UserDropdown
-                                image={session.user.image}
-                                name={session.user.name}
-                                email={session.user.email}
+                                image={session?.user.image}
+                                name={session?.user.name!}
+                                email={session?.user.email!}
                             />
                         </div>
                     </header>

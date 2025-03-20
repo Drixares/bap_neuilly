@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { signOut } from "@/actions/sign-out";
+import { signOut } from "@/app/(application)/admin/actions";
 import { SearchForm } from "@/components/search-form";
 import {
     Sidebar,

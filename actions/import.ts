@@ -7,12 +7,35 @@ import { findColumn } from "@/lib/utils";
 import { ExcelRow, ProcessedUserData } from "@/types/excel-import";
 import { read, utils } from "xlsx";
 import { z } from "zod";
+import { createServerAction } from "zsa";
 
-export async function importFileAction(formData: FormData) {
-    const file = formData.get("file") as File;
+const ImportSchema = z.object({
+  file: z.instanceof(File, {
+    message: "Le fichier est requis",
+  }),
+});
+
+const ImportOutputSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  errors: z.array(z.string()).optional(),
+});
+
+export type InputType = z.infer<typeof ImportSchema>;
+export type ReturnType = z.infer<typeof ImportOutputSchema>;
+
+async function handler({ 
+  input 
+}: { 
+  input: InputType 
+}): Promise<ReturnType> {
+    const { file } = input;
 
     if (!file) {
-        return { success: false, message: "Aucun fichier reçu." };
+        return {
+            success: false,
+            message: "Aucun fichier reçu.",
+        };
     }
 
     if (!file.name.match(/\.(xlsx|xls)$/i)) {
@@ -129,7 +152,7 @@ export async function importFileAction(formData: FormData) {
             message: `${processedData.length} utilisateurs importés avec succès.`,
         };
     } catch (error) {
-        console.error("Erreur lors de l'import :", error);
+        console.error("Erreur lors de l'importation des utilisateurs :", error);
 
         return {
             success: false,
@@ -140,3 +163,6 @@ export async function importFileAction(formData: FormData) {
         };
     }
 }
+
+// Create and export the safe action
+export const importFileAction = createServerAction().input(ImportSchema).handler(handler);

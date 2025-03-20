@@ -12,7 +12,7 @@ export default async function AdminProvider({
     });
 
     if (!session || session.user.role !== "admin") {
-        return redirect("/");
+        redirect("/login");
     }
 
     return <>{children}</>;
