@@ -6,6 +6,8 @@ import { eq } from "drizzle-orm";
 export async function UpdateBusinessAction(
     businessInfoId: string,
     companyName: string,
+    siretNum: string,
+    productTypes: string,
     phone: string,
     businessDescription?: string,
     website?: string
@@ -13,6 +15,8 @@ export async function UpdateBusinessAction(
     const result = await db.update(businessInfo)
         .set({
             companyName,
+            siretNum,
+            productTypes,
             businessDescription,
             phone,
             website,

@@ -50,6 +50,8 @@ export async function importFileAction(formData: FormData) {
             businessDescription: findColumn(firstRow, ["businessDescription", "description", "descriptionEntreprise"]),
             phone: findColumn(firstRow, ["phone", "telephone", "téléphone"]),
             website: findColumn(firstRow, ["website", "site", "siteWeb"]),
+            siretNum: findColumn(firstRow, ["siretNum", "Numéro de Siret", "Siret Number"]),
+            productTypes: findColumn(firstRow, ["productType", "type du produit", "Product Type"])
         };
 
         const requiredColumns = ["name", "email"];
@@ -108,6 +110,7 @@ export async function importFileAction(formData: FormData) {
                 const hasBusinessData = columnMap.companyName && row[columnMap.companyName];
                 
                 if (hasBusinessData) {
+                    console.log(`Business data reçues : ${hasBusinessData}`)
                     if (!columnMap.phone || !row[columnMap.phone]) {
                         errors.push(
                             `Ligne ${index + 2} (entreprise): Le numéro de téléphone est obligatoire`
@@ -121,6 +124,8 @@ export async function importFileAction(formData: FormData) {
                         businessDescription: columnMap.businessDescription ? row[columnMap.businessDescription] : undefined,
                         phone: columnMap.phone ? String(row[columnMap.phone]) : undefined,
                         website: columnMap.website ? row[columnMap.website] : undefined,
+                        siretNum: columnMap.siretNum ? String(row[columnMap.siretNum]) : undefined,
+                        productTypes: row[columnMap.productTypes!]
                     };
                     
                     // Valider les données business

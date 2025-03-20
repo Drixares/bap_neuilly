@@ -8,6 +8,8 @@ interface BusinessInfo {
     id: string;
     userId: string;
     companyName: string;
+    siretNum: string | null;
+    productTypes: string;
     businessDescription?: string | null;  
     registrationNumber?: string | null;   
     phone: string;
@@ -23,6 +25,8 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
 
     const [formData, setFormData] = useState({
         companyName: "",
+        siretNum: "",
+        productTypes: "",
         businessDescription: "",
         phone: "",
         website: ""
@@ -54,9 +58,12 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
                     setBusinessInfo(business);
                     setFormData({
                         companyName: business.companyName || "",
+                        siretNum: business.siretNum || "",
+                        productTypes: business.productTypes || "",
                         businessDescription: business.businessDescription || "",
                         phone: business.phone || "",
                         website: business.website || ""
+
                     });
                 } else {
                     setError("Aucune information d'entreprise trouvée pour cet artisan");
@@ -96,6 +103,8 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
             const result = await UpdateBusinessAction(
                 businessInfo.id,
                 formData.companyName,
+                formData.siretNum,
+                formData.productTypes,
                 formData.phone,
                 formData.businessDescription,
                 formData.website
@@ -139,54 +148,88 @@ export default function FormUpdateArtisans({ artisanId }: {artisanId : string}) 
                     {updateStatus.message}
                 </div>
             )}
-            
-            <input
+            <div>
+                <label>Nom d'entreprise</label>
+                <input
+                    type="text"
+                    name="companyName"
+                    id="companyName"
+                    placeholder="Nom de l'entreprise"
+                    className="w-full rounded-lg border border-gray-700/50 p-2"
+                    required
+                    value={formData.companyName}
+                    onChange={handleChange}
+                />
+            </div>
+            <div>
+                <label>Numéro de Siret</label>
+                <input
+                    type="text"
+                    name="siretNumber"
+                    id="siretNumber"
+                    placeholder="Numéro de SIRET"
+                    className="w-full rounded-lg border border-gray-700/50 p-2"
+                    required
+                    value={formData.siretNum}
+                    onChange={handleChange}
+                />
+            </div>
+            <div>
+                <label>Type de Produit</label>
+                <input
+                    type="text"
+                    name="productTypes"
+                    id="productTypes"
+                    placeholder="Types de produits"
+                    className="w-full rounded-lg border border-gray-700/50 p-2"
+                    required
+                    value={formData.productTypes}
+                    onChange={handleChange}
+                />
+            </div>
+            <div>
+                <label>Description de l'entreprise</label>
+                <input
+                    type="text"
+                    name="businessDescription"
+                    id="businessDescription"
+                    placeholder="Description de l'entreprise"
+                    className="w-full rounded-lg border border-gray-700/50 p-2"
+                    value={formData.businessDescription}
+                    onChange={handleChange}
+                />
+            </div>
+            <div>
+                <label>Numéro de téléphone</label>
+                <input
+                    type="text"
+                    name="phone"
+                    id="phone"
+                    placeholder="Numéro de téléphone"
+                    className="w-full rounded-lg border border-gray-700/50 p-2"
+                    required
+                    value={formData.phone}
+                    onChange={handleChange}
+                />
+            </div>
+            <div>
+                <label>Site Internet</label>
+                <input
                 type="text"
-                name="companyName"
-                id="companyName"
-                placeholder="Nom de l'entreprise"
-                className="w-full rounded-lg border border-gray-700/50 p-2"
-                required
-                value={formData.companyName}
-                onChange={handleChange}
-            />
-            
-            <input
-                type="text"
-                name="businessDescription"
-                id="businessDescription"
-                placeholder="Description de l'entreprise"
-                className="w-full rounded-lg border border-gray-700/50 p-2"
-                value={formData.businessDescription}
-                onChange={handleChange}
-            />
-            
-            <input
-                type="text"
-                name="phone"
-                id="phone"
-                placeholder="Numéro de téléphone"
-                className="w-full rounded-lg border border-gray-700/50 p-2"
-                required
-                value={formData.phone}
-                onChange={handleChange}
-            />
-            
-            <input
-            type="text"
-                name="website"
-                id="website"
-                placeholder="Site internet de l'entreprise"
-                className="w-full rounded-lg border border-gray-700/50 p-2"
-                value={formData.website}
-                onChange={handleChange}
-            />
+                    name="website"
+                    id="website"
+                    placeholder="Site internet de l'entreprise"
+                    className="w-full rounded-lg border border-gray-700/50 p-2"
+                    value={formData.website}
+                    onChange={handleChange}
+                />
+            </div>
             <div className="flex justify-end w-full mt-6">
                 <Button
                     className="bg-primary/90 hover:bg-primary"
                     type="submit"
                 >
-                    Modifier
+                    Sauvegarder
                 </Button>
             </div>
         </form>

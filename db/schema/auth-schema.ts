@@ -23,7 +23,9 @@ export const businessInfo = pgTable("business_info", {
         onDelete: "cascade" 
     }),
     companyName: text("company_name").notNull(),
+    siretNum: text("siret_number"),
     businessDescription: text("business_description"),
+    productTypes: text("product_types").notNull(),
     registrationNumber: text("registration_number"),
     phone: text("phone").notNull(),
     website: text("website"),
