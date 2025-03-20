@@ -1,5 +1,5 @@
 import { StatsGrid } from "@/components/stats-grid";
-import { getStats } from "@/data/stats";
+import { getStats } from "@/use-cases/stats";
 import {
     RiFileTextLine,
     RiQuestionnaireFill,
@@ -27,13 +27,13 @@ export default async function AdminStatsGrid() {
                 },
                 {
                     title: "Documents",
-                    value: "12",
+                    value: stats.numberDocuments.toString(),
                     href: "/admin/documents",
                     icon: RiFileTextLine,
                 },
                 {
                     title: "Demandes en attente",
-                    value: "5",
+                    value: stats.numberRequests.toString(),
                     href: "/admin/demandes",
                     icon: RiQuestionnaireFill,
                 },

@@ -1,4 +1,4 @@
-import { adminUserExists } from "@/data/admin";
+import { adminUserExists } from "@/data-access/admin";
 import { redirect } from "next/navigation";
 
 export default async function CreateAdminProvider({

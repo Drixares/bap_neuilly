@@ -1,4 +1,5 @@
-import { signOut } from "@/actions/sign-out";
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,8 +11,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import { RiLogoutBoxLine, RiSettingsLine } from "@remixicon/react";
+import { signOut } from "../actions";
 
 interface UserDropdownProps {
     image: string | null | undefined;
@@ -19,7 +20,7 @@ interface UserDropdownProps {
     email: string;
 }
 
-export default async function UserDropdown({
+export default function UserDropdown({
     image,
     name,
     email,

@@ -5,6 +5,11 @@ import { businessInfo, user } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 
 export async function getCreators() {
+    const creators = await db.select().from(user).where(eq(user.role, "user"));
+    return creators;
+}
+
+export async function getCreatorsWithBusinessInfo() {
     const creators = await db
         .select({
             id: user.id,
@@ -25,5 +30,15 @@ export async function getCreators() {
         .where(and(eq(user.role, "user"), eq(user.emailVerified, true)))
         .leftJoin(businessInfo, eq(user.businessInfoId, businessInfo.id));
 
-    return creators;
+    return creators; 
 }
+
+export const getCreatorById = async (id: string) => {
+    const creator = await db.select().from(user).where(eq(user.id, id));
+    return creator; 
+};
+
+export const getCreatorByEmail = async (email: string) => {
+    const creator = await db.select().from(user).where(eq(user.email, email));
+    return creator;
+};

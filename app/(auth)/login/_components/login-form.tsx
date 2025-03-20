@@ -63,16 +63,8 @@ export default function LoginForm({
                     }
                 );
             }
+            router.refresh();
 
-            const { data } = await authClient.getSession();
-
-            if (data) {
-                router.push(
-                    LOGIN_REDIRECT_PATH[
-                        data.user.role as keyof typeof LOGIN_REDIRECT_PATH
-                    ]
-                );
-            }
         } catch (error) {
             toast.error("Une erreur est survenue lors de la connexion", {
                 position: "top-center",

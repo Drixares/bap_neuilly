@@ -1,17 +1,17 @@
-import ButtonImportExcel from "@/components/button-excel";
-import PopupImportExcel from "@/components/ui/popup-excel";
 import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import AdminStatsGrid from "./_components/admin-stats-grid";
 import { CreatorsTable } from "./_components/creators-table";
+import ImportExcelBlock from "./_components/import-excel-block";
 
 export const metadata: Metadata = {
     title: "Made In Neuilly - Administration",
 };
 
 export default async function AdminPage() {
+
     const session = await auth.api.getSession({
         headers: await headers(),
     });
@@ -33,8 +33,7 @@ export default async function AdminPage() {
                         de nouveaux artisans avec facilité !
                     </p>
                 </div>
-                <ButtonImportExcel />
-                <PopupImportExcel />
+                <ImportExcelBlock />
             </div>
             {/* Numbers */}
             <AdminStatsGrid />

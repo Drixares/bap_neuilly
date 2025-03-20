@@ -1,6 +1,8 @@
-import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { relations } from 'drizzle-orm';
+import { relations } from "drizzle-orm";
+import { boolean, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
+
+export const requestStatusEnum = pgEnum("request_status", ["en cours", "validée", "rejetée"]);
 export const user = pgTable("user", {
     id: text("id").primaryKey(),
     name: text("name").notNull(),
@@ -89,12 +91,32 @@ export const document = pgTable("document", {
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const userRelations = relations(user, ({ one }) => ({
+export const request = pgTable("request", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => user.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    status: requestStatusEnum("status").default("en cours").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Define relations
+export const userRelations = relations(user, ({ many, one }) => ({
+    requests: many(request),
     businessInfo: one(businessInfo, {
-      fields: [user.id],
-      references: [businessInfo.userId],
+        fields: [user.id],
+        references: [businessInfo.userId],
     }),
-  }));
+}));
+
+export const requestRelations = relations(request, ({ one }) => ({
+    user: one(user, {
+        fields: [request.userId],
+        references: [user.id],
+    }),
+}));
   
   export const businessInfoRelations = relations(businessInfo, ({ one }) => ({
     user: one(user, {
@@ -107,3 +129,7 @@ export type BusinessInfo = typeof businessInfo.$inferSelect;
 export type NewBusinessInfo = typeof businessInfo.$inferInsert;
 export type User = typeof user.$inferSelect;
 export type NewUser = typeof user.$inferInsert;
+export type Document = typeof document.$inferSelect;
+export type NewDocument = typeof document.$inferInsert;
+export type Request = typeof request.$inferSelect;
+export type NewRequest = typeof request.$inferInsert;
