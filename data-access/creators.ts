@@ -35,8 +35,8 @@ export async function getCreatorsWithBusinessInfo() {
 }
 
 export const getCreatorById = async (id: string) => {
-    const creator = await db.select().from(user).where(eq(user.id, id));
-    return creator;
+    const creator = await db.select().from(user).where(eq(user.id, id)).limit(1);    
+    return creator[0];
 };
 
 export const getCreatorByEmail = async (email: string) => {
