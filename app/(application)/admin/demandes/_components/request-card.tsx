@@ -4,14 +4,16 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+    DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Request } from "@/db/schema/auth-schema";
 import { formatPhoneNumber } from "@/lib/utils";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { CheckCircle2, MoreHorizontal, Trash2, XCircle } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
+import { AcceptRequestButton } from "./accept-request-button";
+import { DeclineRequestButton } from "./decline-request-button";
+import { DeleteRequestButton } from "./delete-request-button";
 
 interface RequestCardProps {
     request: Request & {
@@ -59,33 +61,18 @@ export function RequestCard({ request }: RequestCardProps) {
                 </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
+                        <Button variant="ghost" className="size-8 p-0">
+                            <MoreHorizontal className="size-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         {request.status === "en cours" && (
                             <>
-                                <DropdownMenuItem
-                                    className="text-green-600"
-                                >
-                                    <CheckCircle2 className="mr-2 h-4 w-4" />
-                                    Valider
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    className="text-red-600"
-                                >
-                                    <XCircle className="mr-2 h-4 w-4" />
-                                    Rejeter
-                                </DropdownMenuItem>
+                                <AcceptRequestButton requestId={request.id} />
+                                <DeclineRequestButton requestId={request.id} />
                             </>
                         )}
-                        <DropdownMenuItem
-                            className="text-red-600"
-                        >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Supprimer
-                        </DropdownMenuItem>
+                        <DeleteRequestButton requestId={request.id} />
                     </DropdownMenuContent>
                 </DropdownMenu>
             </CardHeader>

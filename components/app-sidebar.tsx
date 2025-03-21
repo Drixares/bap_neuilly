@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { signOut } from "@/app/(application)/admin/actions";
-import { SearchForm } from "@/components/search-form";
 import {
     Sidebar,
     SidebarContent,
@@ -46,7 +45,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </div>
                 </div>
                 <hr className="border-t border-border mx-2 -mt-px" />
-                <SearchForm className="mt-3" />
             </SidebarHeader>
             <SidebarContent>
                 {/* We create a SidebarGroup for each parent. */}
