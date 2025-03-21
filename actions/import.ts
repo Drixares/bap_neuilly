@@ -215,7 +215,7 @@ async function handler({ input }: { input: InputType }): Promise<ReturnType> {
 
         await Promise.all(
             processedUserData.map(async (user) => {
-                const token = createToken(user.email);
+                const token = await createToken(user.email);
                 return await SendEmail({ email: user.email, name: user.name, token });
             })
         );
