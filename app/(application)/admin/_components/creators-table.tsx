@@ -64,7 +64,9 @@ import {
 } from "@tanstack/react-table";
 import { User } from "better-auth";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
+import { toast } from "sonner";
 import FormUpdateArtisans from "./form-update-artisans";
 
 interface GetColumnsProps {
@@ -179,6 +181,7 @@ export function CreatorsTable() {
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     );
+    const router = useRouter();
     const [data, setData] = useState<User[]>([]);
 
     useEffect(() => {
@@ -227,6 +230,8 @@ export function CreatorsTable() {
 
         setData(updatedData);
         table.resetRowSelection();
+        toast.success("Créateurs supprimés avec succès");
+        router.refresh();
     };
 
     return (

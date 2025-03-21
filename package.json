@@ -13,7 +13,8 @@
         "generate": "drizzle-kit generate",
         "migrate": "drizzle-kit migrate",
         "db:push": "drizzle-kit push",
-        "generate:auth": "pnpx @better-auth/cli@latest generate --output ./db/schema/auth-schema.ts"
+        "generate:auth": "pnpx @better-auth/cli@latest generate --output ./db/schema/auth-schema.ts",
+        "seed": "tsx db/seed/index.ts"
     },
     "dependencies": {
         "@hookform/resolvers": "^4.1.3",

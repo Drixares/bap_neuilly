@@ -25,6 +25,7 @@ import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { useServerAction } from "zsa-react";
 
 const uploadFormSchema = z.object({
     file: z.custom<File>((v) => v instanceof File, {
@@ -57,6 +58,18 @@ export function ImportDialog({
         resolver: zodResolver(uploadFormSchema),
     });
 
+    const { execute } = useServerAction(importFileAction, {
+        onSuccess: () => {
+            toast.success("Fichier importé avec succès");
+            router.refresh();
+        },
+        onError: (error) => {
+            toast.error("Une erreur s'est produite lors de l'importation", {
+                position: "top-center",
+            });
+        },
+    });
+
     const onDrop = useCallback(
         (acceptedFiles: File[]) => {
             if (acceptedFiles?.[0]) {
@@ -84,25 +97,8 @@ export function ImportDialog({
 
             const formData = new FormData();
             formData.append("file", values.file);
-            const [data, error] = await importFileAction({ file: values.file });
+            execute({ file: values.file });
 
-            if (error)
-                throw new Error(
-                    error?.message ??
-                        "Une erreur s'est produite lors de l'importation"
-                );
-
-            if (!data?.success) {
-                toast.error("Une erreur s'est produite lors de l'importation", {
-                    position: "top-center",
-                });
-            } else {
-                toast.success(data.message, {
-                    position: "top-center",
-                });
-            }
-
-            router.refresh();
             handleClose();
         } catch (error) {
             toast.error(

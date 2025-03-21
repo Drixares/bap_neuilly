@@ -89,6 +89,16 @@ export const verification = pgTable("verification", {
     updatedAt: timestamp("updated_at"),
 });
 
+export const emailVerification = pgTable("email_verification", {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => user.id, { onDelete: "cascade" }),
+    token: text("token").notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const document = pgTable("document", {
     id: uuid("id").primaryKey().defaultRandom(),
     title: text("title").notNull(),
