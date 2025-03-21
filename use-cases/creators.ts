@@ -1,4 +1,5 @@
 import {
+    getCreatorById,
     getCreatorsWithBusinessInfo,
     updateCreatorAndBusinessInfo,
 } from "@/data-access/creators";
@@ -16,6 +17,19 @@ export const getCreatorsWithBusinessInfoUseCase = async () => {
 
     const creators = await getCreatorsWithBusinessInfo();
     return creators;
+};
+
+export const getCreatorByIdUseCase = async (id: string) => {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    if (!session || session.user.role !== "admin") {
+        throw new Error("Unauthorized");
+    }
+
+    const creator = await getCreatorById(id);
+    return creator;
 };
 
 export const updateCreatorUseCase = async (id: string, data: any) => {

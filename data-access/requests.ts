@@ -2,9 +2,11 @@ import "server-only";
 
 import { db } from "@/db";
 import {
+    businessInfo,
     NewRequest,
     request,
     requestStatusEnum,
+    user,
 } from "@/db/schema/auth-schema";
 import { count, eq } from "drizzle-orm";
 
@@ -64,4 +66,37 @@ export const getNumberOfRequests = async () => {
         })
         .from(request);
     return requests[0].count;
+};
+
+export const getRequestsWithUserInfo = async () => {
+    const requests = await db
+        .select({
+            request: {
+                id: request.id,
+                content: request.content,
+                status: request.status,
+                createdAt: request.createdAt,
+                updatedAt: request.updatedAt,
+                userId: request.userId,
+            },
+            user: {
+                name: user.name,
+                email: user.email,
+            },
+            businessInfo: {
+                phone: businessInfo.phone,
+            },
+        })
+        .from(request)
+        .innerJoin(user, eq(request.userId, user.id))
+        .leftJoin(businessInfo, eq(user.id, businessInfo.userId));
+
+    return requests.map((req) => ({
+        ...req.request,
+        user: {
+            name: req.user.name,
+            email: req.user.email,
+            businessInfo: req.businessInfo,
+        },
+    }));
 };
