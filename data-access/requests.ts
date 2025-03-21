@@ -37,6 +37,10 @@ export const updateRequest = async (id: string, requestData: NewRequest) => {
     return updatedRequest;
 };
 
+export const updateRequestStatus = async (id: string, status: typeof requestStatusEnum.enumValues[number]) => {
+    await db.update(request).set({ status }).where(eq(request.id, id));
+};
+
 export const deleteRequest = async (id: string) => {
     await db.delete(request).where(eq(request.id, id));
 };
