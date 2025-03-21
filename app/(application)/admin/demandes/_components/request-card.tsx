@@ -66,6 +66,12 @@ export function RequestCard({ request }: RequestCardProps) {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
+                        {request.status === "rejetée" && (
+                            <AcceptRequestButton requestId={request.id} />
+                        )}    
+                        {request.status === "validée" && (
+                            <DeclineRequestButton requestId={request.id} />
+                        )}
                         {request.status === "en cours" && (
                             <>
                                 <AcceptRequestButton requestId={request.id} />
