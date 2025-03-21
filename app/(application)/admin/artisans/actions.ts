@@ -9,7 +9,7 @@ const formSchema = z.object({
     name: z.string().min(1),
     email: z.string().email(),
     phone: z.string().min(1),
-    bio: z.string().min(1),
+    bio: z.string().optional(),
     siretNum: z.string().min(1),
     businessDescription: z.string().min(1),
     companyName: z.string().min(1),

@@ -12,6 +12,7 @@ export function DeleteRequestButton({ requestId }: { requestId: string }) {
 
     const { execute } = useServerAction(deleteRequestAction, {
         onSuccess: () => {
+            console.log("Demande supprimée avec succès");
             toast.success("Demande supprimée avec succès");
             router.refresh();
         },
@@ -26,7 +27,7 @@ export function DeleteRequestButton({ requestId }: { requestId: string }) {
 
     return (
         <DropdownMenuItem
-            className="text-red-600"
+            className="text-red-600 cursor-pointer"
             onClick={handleDelete}
         >
             <Trash2 className="mr-2 size-4" />

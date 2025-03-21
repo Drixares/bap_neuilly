@@ -12,17 +12,17 @@ export async function seedDocuments(users: { id: string }[]) {
             fileKey: "guide.pdf",
             fileSize: "2097152", // 2MB
             fileType: "application/pdf",
-            uploadedById: users[2].id, // Admin user
+            uploadedById: users[0].id,
         },
         {
             id: crypto.randomUUID(),
-            title: "Catalogue des produits 2024",
+            title: "Catalogue des produits 2025",
             description: "Catalogue complet des produits disponibles",
             fileUrl: "https://storage.example.com/documents/catalogue.pdf",
             fileKey: "catalogue.pdf",
             fileSize: "5242880", // 5MB
             fileType: "application/pdf",
-            uploadedById: users[2].id, // Admin user
+            uploadedById: users[0].id,
         },
     ];
 

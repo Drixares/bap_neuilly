@@ -38,7 +38,7 @@ export default async function AdminPage() {
             <AdminStatsGrid />
             {/* Table */}
             <div className="min-h-[100vh] flex-1 md:min-h-min">
-                <CreatorsTable />
+                <CreatorsTable key={session.user.id} />
             </div>
         </>
     );

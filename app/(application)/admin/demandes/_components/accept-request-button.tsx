@@ -25,7 +25,7 @@ export function AcceptRequestButton({ requestId }: { requestId: string }) {
     };
 
     return (
-        <DropdownMenuItem onClick={handleAccept}>
+        <DropdownMenuItem onClick={handleAccept} className="cursor-pointer">
             <CheckCircle2 className="mr-2 size-4" />
             Valider
         </DropdownMenuItem>

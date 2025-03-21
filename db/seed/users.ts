@@ -6,23 +6,23 @@ export async function seedUsers() {
     const users = [
         {
             id: crypto.randomUUID(),
-            name: "John Doe",
-            email: "john.doe@example.com",
+            name: "Paul boiseaubert",
+            email: "paul.boiseaubert@gmail.com",
             emailVerified: true,
             role: "user",
             businessInfo: {
-                companyName: "John's Company",
+                companyName: "Paul's Company",
                 siretNum: "12345678901234",
                 productTypes: "Produits artisanaux",
                 phone: "0612345678",
-                website: "https://johns-company.com",
+                website: "https://pauls-company.com",
                 businessDescription: "Une entreprise artisanale de qualité",
             },
         },
         {
             id: crypto.randomUUID(),
-            name: "Jane Smith",
-            email: "jane.smith@example.com",
+            name: "John Doe",
+            email: "john.doe@example.com",
             emailVerified: true,
             role: "user",
             businessInfo: {
@@ -33,13 +33,6 @@ export async function seedUsers() {
                 website: "https://janes-crafts.com",
                 businessDescription: "Créations artisanales uniques",
             },
-        },
-        {
-            id: crypto.randomUUID(),
-            name: "Admin User",
-            email: "admin@example.com",
-            emailVerified: true,
-            role: "admin",
         },
     ];
 
