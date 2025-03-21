@@ -6,15 +6,16 @@ export const resend = new Resend(process.env.RESEND_API_KEY);
 interface SendEmailParams {
     email: string;
     name: string;
+    token: string;
 }
 
-export default async function SendEmail({ email, name }: SendEmailParams) {
+export default async function SendEmail({ email, name, token }: SendEmailParams) {
     try {
         const { data, error } = await resend.emails.send({
             from: "Acme <onboarding@resend.dev>",
             to: [email],
             subject: "Finalisation inscription",
-            react: await EmailTemplate({ Name: name }),
+            react: await EmailTemplate({ Name: name, Token: token }),
         });
 
         if (error) {

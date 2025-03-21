@@ -4,6 +4,7 @@ import SendEmail from "@/app/api/send";
 import { ExcelRowSchema, ProcessedBusinessSchema } from "@/app/schema";
 import { db } from "@/db"; // Import de la connexion à la DB
 import { businessInfo, user } from "@/db/schema/auth-schema"; // Table Drizzle
+import { createToken } from "@/lib/email-token";
 import { findColumn } from "@/lib/utils";
 import {
     ExcelRow,
@@ -214,7 +215,8 @@ async function handler({ input }: { input: InputType }): Promise<ReturnType> {
 
         await Promise.all(
             processedUserData.map(async (user) => {
-                return await SendEmail({ email: user.email, name: user.name });
+                const token = createToken(user.email);
+                return await SendEmail({ email: user.email, name: user.name, token });
             })
         );
 
