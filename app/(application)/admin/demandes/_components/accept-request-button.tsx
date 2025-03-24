@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { CheckCircle2 } from "lucide-react";
@@ -16,7 +16,9 @@ export function AcceptRequestButton({ requestId }: { requestId: string }) {
             router.refresh();
         },
         onError: () => {
-            toast.error("Une erreur est survenue lors de la validation de la demande");
+            toast.error(
+                "Une erreur est survenue lors de la validation de la demande"
+            );
         },
     });
 
@@ -29,5 +31,5 @@ export function AcceptRequestButton({ requestId }: { requestId: string }) {
             <CheckCircle2 className="mr-2 size-4" />
             Valider
         </DropdownMenuItem>
-    )
+    );
 }

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Trash2 } from "lucide-react";
@@ -17,7 +17,9 @@ export function DeleteRequestButton({ requestId }: { requestId: string }) {
             router.refresh();
         },
         onError: () => {
-            toast.error("Une erreur est survenue lors de la suppression de la demande");
+            toast.error(
+                "Une erreur est survenue lors de la suppression de la demande"
+            );
         },
     });
 
@@ -35,4 +37,3 @@ export function DeleteRequestButton({ requestId }: { requestId: string }) {
         </DropdownMenuItem>
     );
 }
-

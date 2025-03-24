@@ -89,15 +89,6 @@ export const verification = pgTable("verification", {
     updatedAt: timestamp("updated_at"),
 });
 
-export const emailVerification = pgTable("email_verification", {
-    id: text("id").primaryKey(),
-    userId: text("user_id")
-        .notNull()
-        .references(() => user.id, { onDelete: "cascade" }),
-    expiresAt: timestamp("expires_at").notNull(),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-});
-
 export const document = pgTable("document", {
     id: uuid("id").primaryKey().defaultRandom(),
     title: text("title").notNull(),
@@ -143,13 +134,6 @@ export const requestRelations = relations(request, ({ one }) => ({
 export const businessInfoRelations = relations(businessInfo, ({ one }) => ({
     user: one(user, {
         fields: [businessInfo.userId],
-        references: [user.id],
-    }),
-}));
-
-export const emailVerificationRelations = relations(emailVerification, ({ one }) => ({
-    user: one(user, {
-        fields: [emailVerification.userId],
         references: [user.id],
     }),
 }));

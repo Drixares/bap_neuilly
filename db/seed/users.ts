@@ -37,8 +37,9 @@ export async function seedUsers() {
     ];
 
     for (const userData of users) {
-        const { businessInfo: businessInfoData, ...userDataWithoutBusiness } = userData;
-        
+        const { businessInfo: businessInfoData, ...userDataWithoutBusiness } =
+            userData;
+
         // Insert user
         await db.insert(user).values(userDataWithoutBusiness);
 
@@ -52,4 +53,4 @@ export async function seedUsers() {
     }
 
     return users;
-} 
+}

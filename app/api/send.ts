@@ -9,7 +9,11 @@ interface SendEmailParams {
     token: string;
 }
 
-export default async function SendEmail({ email, name, token }: SendEmailParams) {
+export default async function SendEmail({
+    email,
+    name,
+    token,
+}: SendEmailParams) {
     try {
         const { data, error } = await resend.emails.send({
             from: "Acme <onboarding@resend.dev>",

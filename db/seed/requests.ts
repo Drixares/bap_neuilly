@@ -7,13 +7,15 @@ export async function seedRequests(users: { id: string }[]) {
         {
             id: crypto.randomUUID(),
             userId: users[0].id,
-            content: "Je souhaite créer une nouvelle collection de produits artisanaux.",
+            content:
+                "Je souhaite créer une nouvelle collection de produits artisanaux.",
             status: "en cours" as const,
         },
         {
             id: crypto.randomUUID(),
             userId: users[0].id,
-            content: "Demande d'ajout de nouveaux types de produits dans le catalogue.",
+            content:
+                "Demande d'ajout de nouveaux types de produits dans le catalogue.",
             status: "validée" as const,
         },
         {
@@ -25,11 +27,12 @@ export async function seedRequests(users: { id: string }[]) {
         {
             id: crypto.randomUUID(),
             userId: users[1].id,
-            content: "Demande de modification des informations de mon entreprise.",
+            content:
+                "Demande de modification des informations de mon entreprise.",
             status: "rejetée" as const,
         },
     ];
 
     await db.insert(request).values(requests);
     return requests;
-} 
+}

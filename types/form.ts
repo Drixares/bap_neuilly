@@ -1,4 +1,8 @@
-import { FirstAdminFormSchema, LoginAdminFormSchema } from "@/app/schema";
+import {
+    FirstAdminFormSchema,
+    LoginAdminFormSchema,
+    VerifyFormSchema,
+} from "@/app/schema";
 import { z, ZodIssue } from "zod";
 
 export type FirstAdminSchemaType = z.infer<typeof FirstAdminFormSchema>;
@@ -14,3 +18,5 @@ export type LoginAdminFormResponse = {
 };
 
 export type LoginAdminFormSchemaType = z.infer<typeof LoginAdminFormSchema>;
+
+export type VerifyFormSchemaType = z.infer<typeof VerifyFormSchema>;

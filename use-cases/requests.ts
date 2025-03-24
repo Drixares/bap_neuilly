@@ -1,4 +1,9 @@
-import { deleteRequest, getRequests, getRequestsWithUserInfo, updateRequestStatus } from "@/data-access/requests";
+import {
+    deleteRequest,
+    getRequests,
+    getRequestsWithUserInfo,
+    updateRequestStatus,
+} from "@/data-access/requests";
 import { requestStatusEnum } from "@/db/schema/auth-schema";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
@@ -24,7 +29,7 @@ export const getRequestsWithUserInfoUseCase = async () => {
     if (!session || session.user.role !== "admin") {
         throw new Error("Unauthorized");
     }
-    
+
     const requests = await getRequestsWithUserInfo();
     return requests;
 };
@@ -41,7 +46,10 @@ export const deleteRequestUseCase = async (requestId: string) => {
     await deleteRequest(requestId);
 };
 
-export const updateRequestStatusUseCase = async (requestId: string, status: typeof requestStatusEnum.enumValues[number]) => {
+export const updateRequestStatusUseCase = async (
+    requestId: string,
+    status: (typeof requestStatusEnum.enumValues)[number]
+) => {
     const session = await auth.api.getSession({
         headers: await headers(),
     });
@@ -56,4 +64,3 @@ export const updateRequestStatusUseCase = async (requestId: string, status: type
 
     await updateRequestStatus(requestId, status);
 };
-

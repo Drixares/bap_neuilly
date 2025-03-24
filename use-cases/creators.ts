@@ -1,5 +1,6 @@
 import {
     getCreatorById,
+    getCreatorIdByEmail,
     getCreatorsWithBusinessInfo,
     updateCreatorAndBusinessInfo,
 } from "@/data-access/creators";
@@ -43,4 +44,9 @@ export const updateCreatorUseCase = async (id: string, data: any) => {
 
     const isUpdated = await updateCreatorAndBusinessInfo(id, data);
     return isUpdated;
+};
+
+export const getCreatorIdByEmailUseCase = async (email: string) => {
+    const creatorId = await getCreatorIdByEmail(email);
+    return creatorId;
 };

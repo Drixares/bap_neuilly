@@ -35,8 +35,17 @@ export async function getCreatorsWithBusinessInfo() {
 }
 
 export const getCreatorById = async (id: string) => {
-    const creator = await db.select().from(user).where(eq(user.id, id)).limit(1);    
+    const creator = await db
+        .select()
+        .from(user)
+        .where(eq(user.id, id))
+        .limit(1);
     return creator[0];
+};
+
+export const getCreatorIdByEmail = async (email: string) => {
+    const creator = await db.select().from(user).where(eq(user.email, email));
+    return creator[0].id;
 };
 
 export const getCreatorByEmail = async (email: string) => {
@@ -73,4 +82,8 @@ export const updateCreatorAndBusinessInfo = async (
         console.error("Error updating creator", error);
         return false;
     }
+};
+
+export const verifyCreator = async (id: string) => {
+    await db.update(user).set({ emailVerified: true }).where(eq(user.id, id));
 };

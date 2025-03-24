@@ -15,12 +15,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -43,6 +37,7 @@ import {
 } from "@/components/ui/table";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { Creator } from "@/types/creator";
 import {
     RiDeleteBinLine,
     RiErrorWarningLine,
@@ -62,19 +57,17 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import { User } from "better-auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import FormUpdateArtisans from "./form-update-artisans";
 
 interface GetColumnsProps {
-    data: User[];
-    setData: React.Dispatch<React.SetStateAction<User[]>>;
+    data: Creator[];
+    setData: React.Dispatch<React.SetStateAction<Creator[]>>;
 }
 
-const getColumns = ({ setData, data }: GetColumnsProps): ColumnDef<User>[] => [
+const getColumns = ({ setData, data }: GetColumnsProps): ColumnDef<Creator>[] => [
     {
         id: "select",
         header: ({ table }) => (
@@ -175,28 +168,13 @@ const getColumns = ({ setData, data }: GetColumnsProps): ColumnDef<User>[] => [
     },
 ];
 
-export function CreatorsTable() {
+export function CreatorsTable({ creators }: { creators: Creator[] }) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-        {}
-    );
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+    const [data, setData] = useState<Creator[]>(creators);
     const router = useRouter();
-    const [data, setData] = useState<User[]>([]);
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            const users = await authClient.admin.listUsers({
-                query: {
-                    limit: 100,
-                    filterField: "role",
-                    filterValue: "user",
-                },
-            });
-            setData(users.data?.users || []);
-        };
-        fetchUsers();
-    }, []);
 
     const table = useReactTable({
         data,
@@ -432,17 +410,18 @@ export function CreatorsTable() {
 }
 
 function RowActions({
-    setData,
+    setData,    
     data,
     item,
 }: {
-    setData: React.Dispatch<React.SetStateAction<User[]>>;
-    data: User[];
-    item: User;
+    setData: React.Dispatch<React.SetStateAction<Creator[]>>;
+    data: Creator[];
+    item: Creator;
 }) {
     const [isUpdatePending, startUpdateTransition] = useTransition();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [showUpdateDialog, setShowUpdateDialog] = useState(false);
+    const router = useRouter();
 
     const handleDelete = () => {
         startUpdateTransition(async () => {
@@ -462,8 +441,10 @@ function RowActions({
 
                 setData(updatedData);
                 setShowDeleteDialog(false);
+                router.refresh();
             } catch (error) {
                 console.error(error);
+                toast.error("Une erreur est survenue lors de la suppression du créateur.");
             }
         });
     };
@@ -504,14 +485,7 @@ function RowActions({
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-            <Dialog open={showUpdateDialog} onOpenChange={setShowUpdateDialog}>
-                <DialogContent className="w-[80%] max-w-2xl ">
-                    <DialogHeader>
-                        <DialogTitle>Modifier le créateur</DialogTitle>
-                    </DialogHeader>
-                    <FormUpdateArtisans artisanId={item.id} />
-                </DialogContent>
-            </Dialog>
+            {/* <UpdateCreatorDialog creator={item} /> */}
 
             <AlertDialog
                 open={showDeleteDialog}

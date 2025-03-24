@@ -1,7 +1,10 @@
-"use server"
+"use server";
 
 import { requestStatusEnum } from "@/db/schema/auth-schema";
-import { deleteRequestUseCase, updateRequestStatusUseCase } from "@/use-cases/requests";
+import {
+    deleteRequestUseCase,
+    updateRequestStatusUseCase,
+} from "@/use-cases/requests";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createServerAction } from "zsa";
