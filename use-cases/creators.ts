@@ -1,4 +1,5 @@
 import {
+    deleteCreators,
     getCreatorById,
     getCreatorIdByEmail,
     getCreatorsWithBusinessInfo,
@@ -49,4 +50,16 @@ export const updateCreatorUseCase = async (id: string, data: any) => {
 export const getCreatorIdByEmailUseCase = async (email: string) => {
     const creatorId = await getCreatorIdByEmail(email);
     return creatorId;
+};
+
+export const deleteCreatorsUseCase = async (ids: string[]) => {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    if (!session || session.user.role !== "admin") {
+        throw new Error("Unauthorized");
+    }
+
+    await deleteCreators(ids);
 };

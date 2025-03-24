@@ -2,7 +2,7 @@ import "server-only";
 
 import { db } from "@/db";
 import { BusinessInfo, businessInfo, User, user } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 export async function getCreators() {
     const creators = await db.select().from(user).where(eq(user.role, "user"));
@@ -86,4 +86,8 @@ export const updateCreatorAndBusinessInfo = async (
 
 export const verifyCreator = async (id: string) => {
     await db.update(user).set({ emailVerified: true }).where(eq(user.id, id));
+};
+
+export const deleteCreators = async (ids: string[]) => {
+    await db.delete(user).where(inArray(user.id, ids));
 };

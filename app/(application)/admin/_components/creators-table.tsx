@@ -1,6 +1,5 @@
 "use client";
 
-import { deleteUsers } from "@/actions/user";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -61,6 +60,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { useServerAction } from "zsa-react";
+import { deleteUsers } from "../actions";
 
 interface GetColumnsProps {
     data: Creator[];
@@ -174,6 +175,21 @@ export function CreatorsTable({ creators }: { creators: Creator[] }) {
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
     const [data, setData] = useState<Creator[]>(creators);
     const router = useRouter();
+    
+    const { execute } = useServerAction(deleteUsers, {
+        onError({ err }) {
+            toast.error(err.message, {
+                position: "top-center",
+                duration: 3000,
+            })
+        }, 
+        onSuccess() {
+            toast.success("Créateurs supprimés avec succès", {
+                position: "top-center",
+                duration: 3000,
+            })
+        }
+    })
 
 
     const table = useReactTable({
@@ -196,19 +212,12 @@ export function CreatorsTable({ creators }: { creators: Creator[] }) {
     const handleDeleteRows = async () => {
         const selectedRows = table.getSelectedRowModel().rows;
         const ids = selectedRows.map((row) => row.original.id);
-
-        const { success, message } = await deleteUsers(ids);
-
-        if (!success) {
-            console.error(message);
-            return;
-        }
+        
+        await execute({ ids });
 
         const updatedData = data.filter((item) => !ids.includes(item.id));
-
         setData(updatedData);
         table.resetRowSelection();
-        toast.success("Créateurs supprimés avec succès");
         router.refresh();
     };
 

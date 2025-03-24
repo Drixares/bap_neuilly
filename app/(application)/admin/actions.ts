@@ -3,6 +3,7 @@
 import { db } from "@/db";
 import { businessInfo } from "@/db/schema";
 import { auth } from "@/lib/auth";
+import { deleteCreatorsUseCase } from "@/use-cases/creators";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -48,3 +49,9 @@ export const UpdateBusinessAction = createServerAction()
 
     return result[0];
 });
+
+export const deleteUsers = createServerAction() 
+    .input(z.object({ ids: z.array(z.string()) }))
+    .handler(async ({ input }) => {
+        await deleteCreatorsUseCase(input.ids)
+    });
