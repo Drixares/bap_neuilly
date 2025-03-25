@@ -1,11 +1,10 @@
 "use server";
 
-import SendEmail from "@/app/api/send";
 import { ExcelRowSchema, ProcessedBusinessSchema } from "@/app/schema";
 import { db } from "@/db"; // Import de la connexion à la DB
 import { businessInfo } from "@/db/schema/auth-schema"; // Table Drizzle
 import { auth } from "@/lib/auth";
-import { createToken } from "@/lib/email-token";
+import { authClient } from "@/lib/auth-client";
 import { findColumn } from "@/lib/utils";
 import {
     ExcelRow,
@@ -179,17 +178,24 @@ const createUser = async (user: ProcessedUserData): Promise<UserWithRole> => {
 };
 
 const sendWelcomeEmail = async (user: ProcessedUserData) => {
-    const token = await createToken(user.email);
-    return await SendEmail({
-        email: user.email,
+    const { data, error } = await authClient.signIn.magicLink({
         name: user.name,
-        token,
+        email: user.email,
+        callbackURL: "/login",
     });
+
+    if (error) {
+        throw new Error(error.message);
+    }
+
+    console.log("Mail envoyé à :", user.email, "avec le status :", data.status)
+    return data;
 };
 
 export const importFileAction = createServerAction()
     .input(ImportSchema)
     .handler(async ({ input: { file } }): Promise<ReturnType> => {
+        
         const session = await auth.api.getSession({
             headers: await headers(),
         });

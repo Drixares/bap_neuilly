@@ -1,8 +1,12 @@
+import CreatorProvider from "@/providers/creator-provider";
+
 const CreatorDashboard = () => {
     return (
-        <div>
-            <h1>Creator Dashboard</h1>
-        </div>
+        <CreatorProvider>
+            <div>
+                <h1>Creator Dashboard</h1>
+            </div>
+        </CreatorProvider>
     );
 };
 

@@ -1,9 +1,9 @@
 import { verifyCreator } from "@/data-access/creators";
-import { auth } from "@/lib/auth";
 import { verifyToken } from "@/lib/email-token";
 
 export const verifyTokenUseCase = async (token: string) => {
     const decoded = await verifyToken(token);
+
     if (!decoded) {
         return {
             success: false,
@@ -28,13 +28,4 @@ export const verifyCreatorUseCase = async (userId: string) => {
     } catch (error) {
         return false;
     }
-};
-
-export const loginCreatorUseCase = async (email: string, password: string) => {
-    await auth.api.signInEmail({
-        body: {
-            email,
-            password,
-        },
-    });
 };
