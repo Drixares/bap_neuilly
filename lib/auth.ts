@@ -22,7 +22,7 @@ export const auth = betterAuth({
                     EmailTemplate({
                         url,
                     })
-                );                
+                );              
 
                 await resend.emails.send({
                     from: process.env.RESEND_FROM_EMAIL || "Resend <onboarding@resend.dev>",

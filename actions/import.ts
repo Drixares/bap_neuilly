@@ -179,7 +179,6 @@ const createUser = async (user: ProcessedUserData): Promise<UserWithRole> => {
 
 const sendWelcomeEmail = async (user: ProcessedUserData) => {
     const { data, error } = await authClient.signIn.magicLink({
-        name: user.name,
         email: user.email,
         callbackURL: "/login",
     });
