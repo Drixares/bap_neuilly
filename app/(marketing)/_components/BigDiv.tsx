@@ -7,12 +7,7 @@ interface BigDivProps {
 
 const BigDiv: React.FC<BigDivProps> = ({ children, className }) => {
   return (
-    <div className={`
-      w-full 
-      h-px
-      w-full
-      bg-[var(--marronf)]
-    `}></div>
+    <div className="h-px w-full bg-[var(--marronf)]" />
   );
 };
 

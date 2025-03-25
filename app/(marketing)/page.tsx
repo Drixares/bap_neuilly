@@ -1,13 +1,13 @@
 // pages/index.tsx
-import Head from 'next/head';
 import type { NextPage } from 'next';
-import Header from '../../components/header';
-import Footer from '../../components/footer';
-import HomeComponent from '../../components/home';
-import Images from '../../components/images';
-import Info from '../../components/infos';
-import FeatureBanner from '../../components/banner';
-import Artisans from '../../components/artisans';
+import Head from 'next/head';
+import Artisans from './_components/artisans';
+import FeatureBanner from './_components/banner';
+import Footer from './_components/footer';
+import Header from './_components/header';
+import HomeComponent from './_components/home';
+import Images from './_components/images';
+import Info from './_components/infos';
 
 const Home: NextPage = () => {
   return (

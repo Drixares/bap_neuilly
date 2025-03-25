@@ -1,24 +1,15 @@
 // pages/index.tsx
-import Head from 'next/head';
-import type { NextPage } from 'next';
-import Header from '../../../components/header';
-import Footer from '../../../components/footer';
-import HomeComponent from '../../../components/home';
-import Images from '../../../components/images';
-import Info from '../../../components/infos';
-import FeatureBanner from '../../../components/banner';
-import Artisans from '../../../components/artisans';
-import BigDiv from '@/components/BigDiv';
+import BigDiv from '@/app/(marketing)/_components/BigDiv';
+import Artisans from '../_components/artisans';
+import Footer from '../_components/footer';
+import Header from '../_components/header';
+import HomeComponent from '../_components/home';
+import Images from '../_components/images';
+import Info from '../_components/infos';
 
-const Home: NextPage = () => {
+export default function Home() {
   return (
-    <div className="  ">
-      <Head>
-        <title>Neuilly</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
+    <div>
       <Header />
 
       <main>
@@ -33,5 +24,3 @@ const Home: NextPage = () => {
     </div>
   );
 };
-
-export default Home;

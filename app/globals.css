@@ -3,7 +3,6 @@
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
-
 @custom-variant dark (&:is(.dark *));
 
 
@@ -14,7 +13,6 @@ h1,h2,h3,h4,h5,h6,button {
 a {
     text-decoration: none;
     font-family: "poster-cut-neue", sans-serif;
-
 }
 
 p {
@@ -24,14 +22,6 @@ p {
     line-height: 135%;
     letter-spacing: 0%;
     margin: 25px;
-}
-
-hr {
-    border: 0;
-    height: 3px;
-    background: var(--marronc);
-    width: 100px;
-    margin: 50px 0;
 }
 
 li {

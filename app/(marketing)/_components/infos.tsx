@@ -1,6 +1,6 @@
 // components/InfoSection.tsx
-import React from 'react';
 import Image from 'next/image';
+import React from 'react';
 
 const InfoSection: React.FC = () => {
   return (
@@ -27,7 +27,7 @@ const InfoSection: React.FC = () => {
             le salon des créateurs revient au théatre des
             sablons.
           </h3>
-          <hr className="border-t-2 border-primary w-1/4 mb-6"/>
+          <hr className="border-t-2 border-[var(--marronc)] w-1/4 mb-6"/>
           <p className="text-lg leading-relaxed text-[var(--marronf)]">
             Avec plus de 5 000 visiteurs et plus de 40 exposants en 2024, le salon des créateurs de Neuilly revient du 29 au 30 Octobre 2025 au théâtre des sablons !
             <br/><br/>
