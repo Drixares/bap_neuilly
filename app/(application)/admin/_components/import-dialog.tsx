@@ -63,10 +63,11 @@ export function ImportDialog({
             toast.success("Fichier importé avec succès");
             router.refresh();
         },
-        onError: (error) => {
-            toast.error("Une erreur s'est produite lors de l'importation", {
-                position: "top-center",
-            });
+        onError: ({ err }) => {
+            toast.error(err.message, {
+                    position: "top-center",
+                }
+            );
         },
     });
 

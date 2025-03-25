@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { FirstAdminSchemaType } from "@/types/admin-form";
+import { FirstAdminSchemaType } from "@/types/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GalleryVerticalEnd, Loader2, TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";

@@ -3,17 +3,23 @@
 import SendEmail from "@/app/api/send";
 import { ExcelRowSchema, ProcessedBusinessSchema } from "@/app/schema";
 import { db } from "@/db"; // Import de la connexion à la DB
-import { businessInfo, user } from "@/db/schema/auth-schema"; // Table Drizzle
+import { businessInfo } from "@/db/schema/auth-schema"; // Table Drizzle
+import { auth } from "@/lib/auth";
+import { createToken } from "@/lib/email-token";
 import { findColumn } from "@/lib/utils";
 import {
     ExcelRow,
     ProcessedBusinessData,
     ProcessedUserData,
 } from "@/types/excel-import";
+import { UserWithRole } from "better-auth/plugins";
+import crypto from "crypto";
+import { headers } from "next/headers";
 import { read, utils } from "xlsx";
 import { z } from "zod";
 import { createServerAction } from "zsa";
 
+// Types and Schemas
 const ImportSchema = z.object({
     file: z.instanceof(File, {
         message: "Le fichier est requis",
@@ -26,227 +32,215 @@ const ImportOutputSchema = z.object({
     errors: z.array(z.string()).optional(),
 });
 
-export type InputType = z.infer<typeof ImportSchema>;
 export type ReturnType = z.infer<typeof ImportOutputSchema>;
 
-async function handler({ input }: { input: InputType }): Promise<ReturnType> {
-    const { file } = input;
+// Column mapping configuration
+const COLUMN_MAPPINGS = {
+    name: ["name", "nom", "username", "utilisateur"] as string[],
+    email: ["email", "mail", "courriel"] as string[],
+    bio: ["bio", "biographie", "description"] as string[],
+    companyName: ["entreprise", "companyName", "company"] as string[],
+    businessDescription: ["businessDescription", "description", "descriptionEntreprise"] as string[],
+    phone: ["phone", "telephone", "téléphone"] as string[],
+    website: ["website", "site", "siteWeb"] as string[],
+    siretNum: ["siretNum", "Numéro de Siret", "Siret Number"] as string[],
+    productTypes: ["productType", "type du produit", "Product Type"] as string[],
+} as const;
 
+// Utility functions
+const validateFile = (file: File) => {
     if (!file) {
-        return {
-            success: false,
-            message: "Aucun fichier reçu.",
-        };
+        throw new Error("Aucun fichier reçu.");
     }
 
     if (!file.name.match(/\.(xlsx|xls)$/i)) {
-        return {
-            success: false,
-            message: "Le fichier doit être au format Excel (.xlsx ou .xls)",
-        };
+        throw new Error("Le fichier doit être au format Excel (.xlsx ou .xls)");
+    }
+};
+
+const parseExcelFile = async (file: File) => {
+    const buffer = await file.arrayBuffer();
+    const workbook = read(buffer, { type: "buffer" });
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rawData = utils.sheet_to_json<ExcelRow>(worksheet);
+
+    if (rawData.length === 0) {
+        throw new Error("Le fichier ne contient aucune donnée.");
     }
 
+    return rawData; 
+};
+
+const getColumnMap = (firstRow: ExcelRow) => {    
+    const columnMap = Object.entries(COLUMN_MAPPINGS).reduce((acc, [key, values]) => {
+        const column = findColumn(firstRow, values);
+        acc[key as keyof typeof COLUMN_MAPPINGS] = column || undefined;
+        return acc;
+    }, {} as Record<keyof typeof COLUMN_MAPPINGS, string | undefined>);
+
+    const requiredColumns = ["name", "email", "companyName", "phone"];
+    const missingColumns = requiredColumns.filter(key => !columnMap[key as keyof typeof columnMap]);
+
+    if (missingColumns.length > 0) {
+        throw new Error(
+            `Format de fichier invalide. Les colonnes suivantes sont manquantes : ${missingColumns.join(", ")}.`
+        );
+    }
+
+    return columnMap;
+};
+
+type ProcessUserDataInput = {
+    row: ExcelRow;
+    columnMap: Record<keyof typeof COLUMN_MAPPINGS, string | undefined>;
+    index: number;
+}
+
+const processUserData = (input: ProcessUserDataInput): ProcessedUserData => {
+    const { row, columnMap, index } = input;
+    const userData = {
+        name: row[columnMap.name!],
+        email: row[columnMap.email!],
+        bio: columnMap.bio ? row[columnMap.bio] : undefined,
+    };
+
+    const validatedUser = ExcelRowSchema.safeParse(userData);
+    if (!validatedUser.success) {
+        throw new Error(`Ligne ${index + 2}: ${validatedUser.error.message}`);
+    }
+
+    return {
+        id: crypto.randomUUID(),
+        role: "user",
+        emailVerified: false,
+        ...validatedUser.data,
+    };
+};
+
+type ProcessedBusinessDataInput = {
+    row: ExcelRow;
+    columnMap: Record<keyof typeof COLUMN_MAPPINGS, string | undefined>;
+    userId: string;
+    index: number;
+}
+
+const processBusinessData = (input: ProcessedBusinessDataInput): ProcessedBusinessData | null => {
+    const { row, columnMap, userId, index } = input;
+
+    if (!columnMap.companyName || !row[columnMap.companyName]) {
+        throw new Error(`Ligne ${index + 2} (entreprise): Le nom de l'entreprise est obligatoire`);
+    }
+
+    if (!columnMap.phone || !row[columnMap.phone]) {
+        throw new Error(`Ligne ${index + 2} (entreprise): Le numéro de téléphone est obligatoire`);
+    }
+
+    const businessData = {
+        userId,
+        companyName: row[columnMap.companyName],
+        businessDescription: columnMap.businessDescription ? row[columnMap.businessDescription] : undefined,
+        phone: String(row[columnMap.phone]),
+        website: columnMap.website ? row[columnMap.website] : undefined,
+        siretNum: columnMap.siretNum ? String(row[columnMap.siretNum]) : undefined,
+        productTypes: columnMap.productTypes ? row[columnMap.productTypes] : undefined,
+    };
+
+    const validatedBusiness = ProcessedBusinessSchema.safeParse(businessData);
+    if (!validatedBusiness.success) {
+        throw new Error(`Ligne ${index + 2} (entreprise): ${validatedBusiness.error.message}`);
+    }
+
+    return validatedBusiness.data;
+};
+
+const createUser = async (user: ProcessedUserData): Promise<UserWithRole> => {
+    const tempPassword = crypto.randomBytes(16).toString("hex");
     try {
-        const buffer = await file.arrayBuffer();
-        const workbook = read(buffer, { type: "buffer" });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rawData = utils.sheet_to_json<ExcelRow>(worksheet);
+        const createdUser = await auth.api.createUser({
+            body: {
+                email: user.email,
+                name: user.name,
+                password: tempPassword,
+                role: user.role,
+                data: {
+                    id: user.id,
+                    bio: user.bio,
+                },
+            },
+            headers: await headers(),
+        });
 
-        if (rawData.length === 0) {
-            return {
-                success: false,
-                message: "Le fichier ne contient aucune donnée.",
-            };
+        return createdUser.user;
+    } catch (error) {
+        throw new Error(
+            `Failed to create user ${user.email}: ${error instanceof Error ? error.message : "Unknown error"}`
+        );
+    }
+};
+
+const sendWelcomeEmail = async (user: ProcessedUserData) => {
+    const token = await createToken(user.email);
+    return await SendEmail({
+        email: user.email,
+        name: user.name,
+        token,
+    });
+};
+
+export const importFileAction = createServerAction()
+    .input(ImportSchema)
+    .handler(async ({ input: { file } }): Promise<ReturnType> => {
+        const session = await auth.api.getSession({
+            headers: await headers(),
+        });
+
+        if (!session?.user || session.user.role !== "admin") {
+            throw new Error("Non autorisé.");
         }
 
-        // Map Excel columns to our schema
-        const firstRow = rawData[0];
-        const columnMap = {
-            name: findColumn(firstRow, [
-                "name",
-                "nom",
-                "username",
-                "utilisateur",
-            ]),
-            email: findColumn(firstRow, ["email", "mail", "courriel"]),
-            bio: findColumn(firstRow, ["bio", "biographie", "description"]),
-            companyName: findColumn(firstRow, [
-                "companyName",
-                "company",
-                "entreprise",
-            ]),
-            businessDescription: findColumn(firstRow, [
-                "businessDescription",
-                "description",
-                "descriptionEntreprise",
-            ]),
-            phone: findColumn(firstRow, ["phone", "telephone", "téléphone"]),
-            website: findColumn(firstRow, ["website", "site", "siteWeb"]),
-            siretNum: findColumn(firstRow, [
-                "siretNum",
-                "Numéro de Siret",
-                "Siret Number",
-            ]),
-            productTypes: findColumn(firstRow, [
-                "productType",
-                "type du produit",
-                "Product Type",
-            ]),
-        };
+        validateFile(file);
 
-        const requiredColumns = ["name", "email"];
-        let missingColumns: string[] = [];
+        const rawData = await parseExcelFile(file);
+        const columnMap = getColumnMap(rawData[0]);
 
-        for (const key of requiredColumns) {
-            if (!columnMap[key as keyof typeof columnMap]) {
-                missingColumns.push(key);
-            }
-        }
-
-        if (missingColumns.length > 0) {
-            return {
-                success: false,
-                message: `Format de fichier invalide. Les colonnes suivantes sont manquantes : ${missingColumns.join(", ")}.`,
-            };
-        }
-
-        // Process and validate each row
         const processedUserData: ProcessedUserData[] = [];
         const processedBusinessData: ProcessedBusinessData[] = [];
 
-        const errors: string[] = [];
-
+        // First, process all the data
         for (const [index, row] of rawData.entries()) {
-            try {
-                // Extract data according to column mapping
-                const userData = {
-                    name: row[columnMap.name!],
-                    email: row[columnMap.email!],
-                    bio: columnMap.bio ? row[columnMap.bio] : undefined,
-                };
+            const user = processUserData({ row, columnMap, index });
+            processedUserData.push(user);
 
-                // Validate row data
-                const validatedUser = ExcelRowSchema.safeParse(userData);
-
-                if (!validatedUser.success) {
-                    errors.push(
-                        `Ligne ${index + 2}: ${validatedUser.error.message}`
-                    );
-                    continue;
-                }
-
-                const userId = crypto.randomUUID();
-                // Create user data
-                const processedUser: ProcessedUserData = {
-                    id: userId,
-                    role: "user",
-                    emailVerified: false,
-                    ...validatedUser.data,
-                };
-
-                // Validate final user data
-                processedUserData.push(processedUser);
-
-                const hasBusinessData =
-                    columnMap.companyName && row[columnMap.companyName];
-
-                if (hasBusinessData) {
-                    console.log(`Business data reçues : ${hasBusinessData}`);
-                    if (!columnMap.phone || !row[columnMap.phone]) {
-                        errors.push(
-                            `Ligne ${index + 2} (entreprise): Le numéro de téléphone est obligatoire`
-                        );
-                        continue;
-                    }
-                    const businessData = {
-                        id: crypto.randomUUID(),
-                        userId: userId, // Associer l'entreprise à l'utilisateur
-                        companyName: row[columnMap.companyName!],
-                        businessDescription: columnMap.businessDescription
-                            ? row[columnMap.businessDescription]
-                            : undefined,
-                        phone: columnMap.phone
-                            ? String(row[columnMap.phone])
-                            : undefined,
-                        website: columnMap.website
-                            ? row[columnMap.website]
-                            : undefined,
-                        siretNum: columnMap.siretNum
-                            ? String(row[columnMap.siretNum])
-                            : undefined,
-                        productTypes: row[columnMap.productTypes!],
-                    };
-
-                    // Valider les données business
-                    const validatedBusiness =
-                        ProcessedBusinessSchema.safeParse(businessData);
-
-                    if (!validatedBusiness.success) {
-                        errors.push(
-                            `Ligne ${index + 2} (entreprise): ${validatedBusiness.error.message}`
-                        );
-                        continue;
-                    }
-
-                    processedBusinessData.push(validatedBusiness.data);
-                }
-            } catch (error) {
-                if (error instanceof z.ZodError) {
-                    errors.push(
-                        `Ligne ${index + 2}: ${error.errors[0].message}`
-                    );
-                } else {
-                    errors.push(
-                        `Ligne ${index + 2}: Erreur de validation inattendue`
-                    );
-                }
+            const business = processBusinessData({ row, columnMap, userId: user.id, index });
+            if (business) {
+                processedBusinessData.push(business);
             }
         }
 
-        if (errors.length > 0) {
-            const errorDetails = errors.join("\n• ");
+        try {
+            // Create users first
+            await Promise.all(processedUserData.map(createUser));
+
+            // Insert business data only after users are created
+            if (processedBusinessData.length > 0) {
+                await db.transaction(async (tx) => {
+                    await tx.insert(businessInfo).values(processedBusinessData);
+                });
+            }
+
+            // Send welcome emails
+            await Promise.all(processedUserData.map(sendWelcomeEmail));
+
+            return {
+                success: true,
+                message: `${processedUserData.length} utilisateurs et ${processedBusinessData.length} entreprises importés avec succès.`,
+            };
+        } catch (error) {
+            console.error("Import error:", error);
             return {
                 success: false,
-                message: `Erreurs de validation : ${errorDetails}`,
-                errors,
+                message: "Une erreur est survenue lors de l'import.",
+                errors: [error instanceof Error ? error.message : "Erreur inconnue"],
             };
         }
-
-        await Promise.all(
-            processedUserData.map(async (user) => {
-                return await SendEmail({ email: user.email, name: user.name });
-            })
-        );
-
-        // Insert users into the database
-        await db.transaction(async (tx) => {
-            // Insérer les utilisateurs
-            await tx.insert(user).values(processedUserData);
-
-            // Insérer les données business si présentes
-            if (processedBusinessData.length > 0) {
-                await tx.insert(businessInfo).values(processedBusinessData);
-            }
-        });
-
-        return {
-            success: true,
-            message: `${processedUserData.length} utilisateurs et ${processedBusinessData.length} entreprises importés avec succès.`,
-        };
-    } catch (error) {
-        console.error("Erreur lors de l'import :", error);
-
-        return {
-            success: false,
-            message:
-                error instanceof Error
-                    ? error.message
-                    : "Erreur lors de l'insertion des données.",
-        };
-    }
-}
-
-// Create and export the safe action
-export const importFileAction = createServerAction()
-    .input(ImportSchema)
-    .handler(handler);
+    });

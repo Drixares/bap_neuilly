@@ -11,6 +11,20 @@ export const LoginAdminFormSchema = z.object({
     password: z.string().min(8),
 });
 
+export const VerifyFormSchema = z
+    .object({
+        password: z.string().min(8),
+        confirmPassword: z.string().min(8),
+    })
+    .superRefine(({ password, confirmPassword }, ctx) => {
+        if (password !== confirmPassword) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Les mots de passe ne correspondent pas.",
+            });
+        }
+    });
+
 // Zod schema for Excel row data
 export const ExcelRowSchema = z
     .object({
@@ -31,7 +45,6 @@ export const ProcessedUserSchema = z.object({
 });
 
 export const ProcessedBusinessSchema = z.object({
-    id: z.string().uuid(),
     userId: z.string().uuid(),
     companyName: z.string().min(1),
     siretNum: z.string().min(1).optional(),
