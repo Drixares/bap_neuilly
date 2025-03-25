@@ -1,10 +1,16 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuTrigger
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Request } from "@/db/schema/auth-schema";
 import { formatPhoneNumber } from "@/lib/utils";
@@ -41,8 +47,8 @@ export function RequestCard({ request }: RequestCardProps) {
                                 request.status === "validée"
                                     ? "default"
                                     : request.status === "rejetée"
-                                    ? "destructive"
-                                    : "secondary"
+                                      ? "destructive"
+                                      : "secondary"
                             }
                         >
                             {request.status}
@@ -54,21 +60,27 @@ export function RequestCard({ request }: RequestCardProps) {
                     <div className="mt-2 space-y-1">
                         {request.user.businessInfo?.phone && (
                             <p className="text-xs text-muted-foreground">
-                                Tél: {formatPhoneNumber("0" + request.user.businessInfo.phone)}
+                                Tél:{" "}
+                                {formatPhoneNumber(
+                                    "0" + request.user.businessInfo.phone
+                                )}
                             </p>
                         )}
                     </div>
                 </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="size-8 p-0 cursor-pointer">
+                        <Button
+                            variant="ghost"
+                            className="size-8 p-0 cursor-pointer"
+                        >
                             <MoreHorizontal className="size-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         {request.status === "rejetée" && (
                             <AcceptRequestButton requestId={request.id} />
-                        )}    
+                        )}
                         {request.status === "validée" && (
                             <DeclineRequestButton requestId={request.id} />
                         )}

@@ -350,9 +350,12 @@ export function UpdateCreatorDialog({ creator }: { creator: Creator }) {
             router.refresh();
         },
         onError: (error) => {
-            toast.error("Une erreur est survenue lors de la mise à jour du créateur", {
-                position: "top-center",
-            });
+            toast.error(
+                "Une erreur est survenue lors de la mise à jour du créateur",
+                {
+                    position: "top-center",
+                }
+            );
         },
     });
 

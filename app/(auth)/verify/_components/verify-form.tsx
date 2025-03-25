@@ -1,6 +1,6 @@
 "use client";
 
-import { LoginAdminFormSchema } from "@/app/schema";
+import { VerifyFormSchema } from "@/app/schema";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -11,66 +11,54 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { LoginAdminFormSchemaType } from "@/types/form";
+import { VerifyFormSchemaType } from "@/types/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { GalleryVerticalEnd, Loader2, TriangleAlert } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Loader2, TriangleAlert } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useServerAction } from "zsa-react";
+import { verifyCreatorAction } from "../actions";
 
-const ERROR_MESSAGES = {
-    INVALID_EMAIL_OR_PASSWORD:
-        "Email ou mot de passe incorrect. Veuillez réessayer.",
-};
-
-const LOGIN_REDIRECT_PATH = {
-    admin: "/admin",
-    user: "/dashboard",
-};
-
-export default function LoginForm({
+export default function VerifyForm({
     className,
     ...props
 }: React.ComponentPropsWithoutRef<"div">) {
     const router = useRouter();
+    const searchParams = useSearchParams();
 
-    const form = useForm<LoginAdminFormSchemaType>({
-        resolver: zodResolver(LoginAdminFormSchema),
-        defaultValues: {
-            email: "",
-            password: "",
+    const { execute: verifyCreator } = useServerAction(verifyCreatorAction, {
+        onSuccess: () => {
+            router.push("/login");
         },
-    });
-
-    const onSubmit = async (values: LoginAdminFormSchemaType) => {
-        try {
-            const res = await authClient.signIn.email({
-                email: values.email,
-                password: values.password,
-            });
-
-            if (res?.error) {
-                toast.error(
-                    ERROR_MESSAGES[
-                        res.error.code as keyof typeof ERROR_MESSAGES
-                    ],
-                    {
-                        position: "top-center",
-                        icon: <TriangleAlert className="size-4" />,
-                        duration: 3000,
-                    }
-                );
+        onError: ({ err }) => {
+            if (err.message === "Token invalide.") {
+                router.push("/");
             }
-            router.refresh();
-        } catch (error) {
-            toast.error("Une erreur est survenue lors de la connexion", {
+
+            toast.error(err.message, {
                 position: "top-center",
                 icon: <TriangleAlert className="size-4" />,
                 duration: 3000,
             });
-        }
+        },
+    });
+
+    const form = useForm<VerifyFormSchemaType>({
+        resolver: zodResolver(VerifyFormSchema),
+        defaultValues: {
+            password: "",
+            confirmPassword: "",
+        },
+    });
+
+    const onSubmit = async (values: VerifyFormSchemaType) => {
+        await verifyCreator({
+            token: searchParams.get("token") as string,
+            password: values.password,
+            confirmPassword: values.confirmPassword,
+        });
     };
 
     return (
@@ -80,36 +68,10 @@ export default function LoginForm({
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="flex flex-col gap-6"
                 >
-                    <div className="flex flex-col items-center gap-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-md">
-                            <GalleryVerticalEnd className="size-6" />
-                        </div>
-                        <h1 className="text-center text-xl font-bold">
-                            Made In Neuilly
-                        </h1>
-                        <div className="text-center text-sm">
-                            Vous êtes un administrateur ou un artisan ?
-                            Connectez vous pour accéder à votre espace.
-                        </div>
-                    </div>
+                    <h1 className="text-center text-xl font-semibold">
+                        Créez votre mot de passe
+                    </h1>
                     <div className="flex flex-col gap-6">
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="email"
-                                            placeholder="john.doe@example.com"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
                         <FormField
                             control={form.control}
                             name="password"
@@ -127,21 +89,45 @@ export default function LoginForm({
                                 </FormItem>
                             )}
                         />
+                        <FormField
+                            control={form.control}
+                            name="confirmPassword"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        Confirmation du mot de passe
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="password"
+                                            placeholder="********"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <Button
                             type="submit"
                             className={cn(
                                 "w-full",
-                                form.formState.isSubmitting && "opacity-50"
+                                form.formState.isSubmitting &&
+                                    !form.formState.isValid &&
+                                    "opacity-50"
                             )}
-                            disabled={form.formState.isSubmitting}
+                            disabled={
+                                form.formState.isSubmitting ||
+                                !form.formState.isValid
+                            }
                         >
                             {form.formState.isSubmitting ? (
                                 <>
                                     <Loader2 className="size-4 mr-2 animate-spin" />
-                                    Connexion en cours...
+                                    Vérification du compte...
                                 </>
                             ) : (
-                                "Se connecter"
+                                "Valider mon compte"
                             )}
                         </Button>
                     </div>

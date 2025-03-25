@@ -1,8 +1,36 @@
 "use client";
-import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { UpdateBusinessAction } from "@/actions/update-business";
-import { getBusinessInfoByArtisanId } from "@/actions/fetch-business-data";
+
+import { getBusinessInfoByArtisanIdAction } from "@/actions/fetch-business-data";
+import { UpdateBusinessAction } from "@/app/(application)/admin/actions";
 import { Button } from "@/components/ui/button";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useServerAction } from "zsa-react";
+
+const formSchema = z.object({
+    companyName: z.string().min(1, "Le nom de l'entreprise est requis"),
+    siretNum: z.string().optional(),
+    productTypes: z.string().min(1, "Le type de produit est requis"),
+    businessDescription: z.string().optional(),
+    phone: z.string().min(1, "Le numéro de téléphone est requis"),
+    website: z.string().optional(),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 interface BusinessInfo {
     id: string;
@@ -23,231 +51,193 @@ export default function FormUpdateArtisans({
 }: {
     artisanId: string;
 }) {
-    const [businessInfo, setBusinessInfo] = useState<BusinessInfo | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    const [formData, setFormData] = useState({
-        companyName: "",
-        siretNum: "",
-        productTypes: "",
-        businessDescription: "",
-        phone: "",
-        website: "",
+    const { execute: updateBusiness, isPending: isUpdating } = useServerAction(UpdateBusinessAction, {
+        onSuccess: () => {
+            toast.success("Informations mises à jour avec succès", {
+                position: "top-center",
+            });
+        },
+        onError: (error) => {
+            toast.error("Une erreur est survenue lors de la mise à jour", {
+                position: "top-center",
+            });
+        },
     });
 
-    const [updateStatus, setUpdateStatus] = useState({
-        message: "",
-        isError: false,
+    const { execute: fetchBusiness, data: businessInfo } = useServerAction(getBusinessInfoByArtisanIdAction);
+
+    const form = useForm<FormValues>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            companyName: "",
+            siretNum: "",
+            productTypes: "",
+            businessDescription: "",
+            phone: "",
+            website: "",
+        },
     });
 
     useEffect(() => {
-        if (!artisanId) {
-            console.error("artisanId manquant");
-            setError("ID d'artisan manquant ou invalide");
-            setLoading(false);
+        const loadBusinessInfo = async () => {
+            if (!artisanId) return;
+            
+            try {
+                await fetchBusiness({ artisanId });
+            } catch (error) {
+                toast.error("Erreur lors de la récupération des données", {
+                    position: "top-center",
+                });
+            }
+        };
+
+        loadBusinessInfo();
+    }, [artisanId, fetchBusiness]);
+
+    useEffect(() => {
+        if (businessInfo) {
+            form.reset({
+                companyName: businessInfo.companyName || "",
+                siretNum: businessInfo.siretNum || "",
+                productTypes: businessInfo.productTypes || "",
+                businessDescription: businessInfo.businessDescription || "",
+                phone: businessInfo.phone || "",
+                website: businessInfo.website || "",
+            });
+        }
+    }, [businessInfo, form]);
+
+    const onSubmit = async (values: FormValues) => {
+        if (!businessInfo?.id) {
+            toast.error("ID de l'entreprise manquant", {
+                position: "top-center",
+            });
             return;
         }
-        async function fetchBusinessInfo() {
-            try {
-                setLoading(true);
-                setError(null);
 
-                const business = await getBusinessInfoByArtisanId(artisanId);
-                console.log("Données business récupérées:", business);
-
-                if (business) {
-                    setBusinessInfo(business);
-                    setFormData({
-                        companyName: business.companyName || "",
-                        siretNum: business.siretNum || "",
-                        productTypes: business.productTypes || "",
-                        businessDescription: business.businessDescription || "",
-                        phone: business.phone || "",
-                        website: business.website || "",
-                    });
-                } else {
-                    setError(
-                        "Aucune information d'entreprise trouvée pour cet artisan"
-                    );
-                }
-            } catch (err) {
-                console.error(
-                    "Erreur lors de la récupération des données:",
-                    err
-                );
-                setError(
-                    "Erreur lors de la récupération des informations d'entreprise"
-                );
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        if (artisanId) {
-            fetchBusinessInfo();
-        }
-    }, [artisanId]);
-
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
+        await updateBusiness({
+            businessInfoId: businessInfo.id,
+            ...values,
+            siretNum: values.siretNum || "",
         });
     };
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        try {
-            if (!businessInfo || !businessInfo.id) {
-                setUpdateStatus({
-                    message: "Informations d'entreprise non disponibles",
-                    isError: true,
-                });
-                return;
-            }
-
-            const result = await UpdateBusinessAction(
-                businessInfo.id,
-                formData.companyName,
-                formData.siretNum,
-                formData.productTypes,
-                formData.phone,
-                formData.businessDescription,
-                formData.website
-            );
-
-            setUpdateStatus({
-                message: "Informations mises à jour avec succès",
-                isError: false,
-            });
-        } catch (error) {
-            console.error("Erreur lors de la mise à jour:", error);
-            setUpdateStatus({
-                message: "Échec de la mise à jour",
-                isError: true,
-            });
-        }
-    };
-
-    if (loading) {
+    if (!businessInfo) {
         return (
-            <div className="flex justify-center p-4">
-                Chargement des informations...
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="p-4">
-                <div className="bg-red-100 text-red-800 p-4 rounded mb-4">
-                    {error}
-                </div>
-                <Button
-                    onClick={() => setError(null)}
-                    className="bg-primary/90 hover:bg-primary"
-                >
-                    Réessayer
-                </Button>
+            <div className="flex justify-center items-center p-8">
+                <Loader2 className="h-6 w-6 animate-spin" />
             </div>
         );
     }
 
     return (
-        <form className="flex flex-col mt-8 gap-8" onSubmit={handleSubmit}>
-            {updateStatus.message && (
-                <div
-                    className={`p-2 rounded ${updateStatus.isError ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}
-                >
-                    {updateStatus.message}
-                </div>
-            )}
-            <div>
-                <label>Nom d'entreprise</label>
-                <input
-                    type="text"
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                    control={form.control}
                     name="companyName"
-                    id="companyName"
-                    placeholder="Nom de l'entreprise"
-                    className="w-full rounded-lg border border-gray-700/50 p-2"
-                    required
-                    value={formData.companyName}
-                    onChange={handleChange}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Nom d'entreprise</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Nom de l'entreprise" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-            </div>
-            <div>
-                <label>Numéro de Siret</label>
-                <input
-                    type="text"
-                    name="siretNumber"
-                    id="siretNumber"
-                    placeholder="Numéro de SIRET"
-                    className="w-full rounded-lg border border-gray-700/50 p-2"
-                    required
-                    value={formData.siretNum}
-                    onChange={handleChange}
+
+                <FormField
+                    control={form.control}
+                    name="siretNum"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Numéro de Siret</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Numéro de SIRET" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-            </div>
-            <div>
-                <label>Type de Produit</label>
-                <input
-                    type="text"
+
+                <FormField
+                    control={form.control}
                     name="productTypes"
-                    id="productTypes"
-                    placeholder="Types de produits"
-                    className="w-full rounded-lg border border-gray-700/50 p-2"
-                    required
-                    value={formData.productTypes}
-                    onChange={handleChange}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Type de Produit</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Types de produits" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-            </div>
-            <div>
-                <label>Description de l'entreprise</label>
-                <input
-                    type="text"
+
+                <FormField
+                    control={form.control}
                     name="businessDescription"
-                    id="businessDescription"
-                    placeholder="Description de l'entreprise"
-                    className="w-full rounded-lg border border-gray-700/50 p-2"
-                    value={formData.businessDescription}
-                    onChange={handleChange}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Description de l'entreprise</FormLabel>
+                            <FormControl>
+                                <Textarea 
+                                    placeholder="Description de l'entreprise"
+                                    className="resize-none"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-            </div>
-            <div>
-                <label>Numéro de téléphone</label>
-                <input
-                    type="text"
+
+                <FormField
+                    control={form.control}
                     name="phone"
-                    id="phone"
-                    placeholder="Numéro de téléphone"
-                    className="w-full rounded-lg border border-gray-700/50 p-2"
-                    required
-                    value={formData.phone}
-                    onChange={handleChange}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Numéro de téléphone</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Numéro de téléphone" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-            </div>
-            <div>
-                <label>Site Internet</label>
-                <input
-                    type="text"
+
+                <FormField
+                    control={form.control}
                     name="website"
-                    id="website"
-                    placeholder="Site internet de l'entreprise"
-                    className="w-full rounded-lg border border-gray-700/50 p-2"
-                    value={formData.website}
-                    onChange={handleChange}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Site Internet</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Site internet de l'entreprise" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-            </div>
-            <div className="flex justify-end w-full mt-6">
-                <Button
-                    className="bg-primary/90 hover:bg-primary"
-                    type="submit"
-                >
-                    Sauvegarder
-                </Button>
-            </div>
-        </form>
+
+                <div className="flex justify-end">
+                    <Button
+                        type="submit"
+                        className="bg-primary/90 hover:bg-primary"
+                        disabled={isUpdating}
+                    >
+                        {isUpdating ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Sauvegarde en cours...
+                            </>
+                        ) : (
+                            "Sauvegarder"
+                        )}
+                    </Button>
+                </div>
+            </form>
+        </Form>
     );
 }

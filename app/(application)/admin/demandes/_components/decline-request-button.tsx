@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { XCircle } from "lucide-react";
@@ -25,5 +25,5 @@ export function DeclineRequestButton({ requestId }: { requestId: string }) {
             <XCircle className="mr-2 size-4" />
             Rejeter
         </DropdownMenuItem>
-    )
+    );
 }

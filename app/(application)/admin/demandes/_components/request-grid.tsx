@@ -4,7 +4,7 @@ import { RequestCard } from "./request-card";
 export async function RequestGrid() {
     const requests = await getRequestsWithUserInfoUseCase();
 
-    if (requests.length === 0) {    
+    if (requests.length === 0) {
         return (
             <div className="text-center py-8 text-muted-foreground">
                 Aucune demande trouvée

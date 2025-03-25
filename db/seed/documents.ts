@@ -28,4 +28,4 @@ export async function seedDocuments(users: { id: string }[]) {
 
     await db.insert(document).values(documents);
     return documents;
-} 
+}

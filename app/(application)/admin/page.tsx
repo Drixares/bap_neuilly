@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { getCreatorsWithBusinessInfoUseCase } from "@/use-cases/creators";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -19,6 +20,8 @@ export default async function AdminPage() {
         return redirect("/");
     }
 
+    const creators = await getCreatorsWithBusinessInfoUseCase();
+
     return (
         <>
             {/* Page intro */}
@@ -38,7 +41,7 @@ export default async function AdminPage() {
             <AdminStatsGrid />
             {/* Table */}
             <div className="min-h-[100vh] flex-1 md:min-h-min">
-                <CreatorsTable key={session.user.id} />
+                <CreatorsTable key={session.user.id} creators={creators} />
             </div>
         </>
     );
