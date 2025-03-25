@@ -1,10 +1,26 @@
+// pages/index.tsx
+import BigDiv from '@/app/(marketing)/_components/BigDiv';
+import Artisans from '../_components/artisans';
+import Footer from '../_components/footer';
+import Header from '../_components/header';
+import HomeComponent from '../_components/home';
+import Images from '../_components/images';
+import Info from '../_components/infos';
 
-const CreatorsLandingPage = () => {
-    return (
-        <div>
-            <h1>Creators Landing Page</h1>
-        </div>
-    );
+export default function Home() {
+  return (
+    <div>
+      <Header />
+
+      <main>
+        <HomeComponent />
+        <Images />
+        <Info />
+        <BigDiv/>
+        <Artisans />
+      </main>
+
+      <Footer />
+    </div>
+  );
 };
-
-export default CreatorsLandingPage;
