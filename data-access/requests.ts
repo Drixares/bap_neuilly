@@ -8,7 +8,7 @@ import {
     requestStatusEnum,
     user,
 } from "@/db/schema/auth-schema";
-import { count, eq } from "drizzle-orm";
+import { count, desc, eq } from "drizzle-orm";
 
 export const createRequest = async (requestData: NewRequest) => {
     const [newRequest] = await db
@@ -96,7 +96,8 @@ export const getRequestsWithUserInfo = async () => {
         })
         .from(request)
         .innerJoin(user, eq(request.userId, user.id))
-        .leftJoin(businessInfo, eq(user.id, businessInfo.userId));
+        .leftJoin(businessInfo, eq(user.id, businessInfo.userId))
+        .orderBy(desc(request.createdAt));
 
     return requests.map((req) => ({
         ...req.request,
