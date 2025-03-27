@@ -1,7 +1,7 @@
 import { NavLink, SocialLink } from "@/types/marketing";
 
 export const NAV_LINKS: NavLink[] = [
-    { href: '#', label: 'Liste des créateurs' },
+    { href: '/creators-list', label: 'Liste des créateurs' },
     { href: '#', label: 'Dates, horaires et lieu' },
     { href: '#', label: "Info et plan d'accès" },
   ];

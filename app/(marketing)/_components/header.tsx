@@ -47,7 +47,7 @@ const SocialLinks = ({ className }: { className?: string }) => (
 const Header: React.FC = () => {
   return (
     <header className="relative p-4 md:p-[25px] flex flex-row items-center justify-between bg-[var(--beige)]">
-      <Logo />
+      <Link href="/"><Logo /></Link>
       <MobileMenu />
 
       {/* Desktop Navigation */}
