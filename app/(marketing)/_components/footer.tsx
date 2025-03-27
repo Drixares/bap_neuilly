@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
           <div className="w-full md:w-1/4 flex justify-center md:justify-start mb-8 md:mb-0">
             <div className="h-[100px] w-auto">
               <Image 
-                src="/img/image 7.png" 
+                src="/img/logo 3.png" 
                 alt="logo" 
                 width={180} 
                 height={100}
@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
             </div>
             
             <div className="flex flex-col items-center sm:items-start">
-              <h3 className="text-xl font-semibold mb-6 uppercase">liens utiles</h3>
+              <h3 className="text-xl font-semibold mb-6 uppercase">Liens utiles</h3>
               <div className="flex flex-col items-center sm:items-start space-y-4">
                 <Link href="" className="hover:text-[var(--beige)] transition-colors">Devenir exposant</Link>
                 <Link href="" className="hover:text-[var(--beige)] transition-colors">Accès et logistique</Link>
@@ -42,7 +42,7 @@ const Footer: React.FC = () => {
             </div>
             
             <div className="flex flex-col items-center sm:items-start">
-              <h3 className="text-xl font-semibold mb-6 uppercase">mentions légales</h3>
+              <h3 className="text-xl font-semibold mb-6 uppercase">Mentions légales</h3>
               <div className="flex flex-col items-center sm:items-start space-y-4">
                 <Link href="" className="hover:text-[var(--beige)] transition-colors">Mentions légales</Link>
                 <Link href="" className="hover:text-[var(--beige)] transition-colors">Politique de confidentialité</Link>
@@ -84,8 +84,8 @@ const Footer: React.FC = () => {
                 <Link href="" className="text-white hover:text-[var(--beige)] transition-colors duration-300">
                   <div className="bg-[var(--beige)] p-1.5 rounded-full">
                     <Image 
-                      src="/icon/Vector.png" 
-                      alt="Social media" 
+                      src="/icon/linkedin.png" 
+                      alt="LinkedIn" 
                       width={28} 
                       height={28}
                       className="h-[28px] w-auto" 
