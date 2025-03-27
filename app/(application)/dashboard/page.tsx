@@ -1,8 +1,17 @@
+import { Button } from "@/components/ui/button";
+import CreatorProvider from "@/providers/creator-provider";
+import { signOut } from "../admin/actions";
+
 const CreatorDashboard = () => {
     return (
-        <div>
-            <h1>Creator Dashboard</h1>
-        </div>
+        <CreatorProvider>
+            <div>
+                <h1>Creator Dashboard</h1>
+                <Button onClick={signOut}>
+                    Se déconnecter
+                </Button>   
+            </div>
+        </CreatorProvider>
     );
 };
 
