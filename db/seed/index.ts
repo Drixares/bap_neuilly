@@ -11,11 +11,11 @@ async function main() {
         console.log(`✅ Seeded ${users.length} users`);
 
         // Seed requests
-        const requests = await seedRequests(users);
+        const requests = await seedRequests();
         console.log(`✅ Seeded ${requests.length} requests`);
 
         // Seed documents
-        const documents = await seedDocuments(users);
+        const documents = await seedDocuments();
         console.log(`✅ Seeded ${documents.length} documents`);
 
         console.log("✨ Database seeding completed successfully!");

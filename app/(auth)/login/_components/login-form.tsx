@@ -15,20 +15,10 @@ import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { LoginAdminFormSchemaType } from "@/types/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { GalleryVerticalEnd, Loader2, TriangleAlert } from "lucide-react";
+import { CheckCircle, GalleryVerticalEnd, Loader2, TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-const ERROR_MESSAGES = {
-    INVALID_EMAIL_OR_PASSWORD:
-        "Email ou mot de passe incorrect. Veuillez réessayer.",
-};
-
-const LOGIN_REDIRECT_PATH = {
-    admin: "/admin",
-    user: "/dashboard",
-};
 
 export default function LoginForm({
     className,
@@ -40,32 +30,30 @@ export default function LoginForm({
         resolver: zodResolver(LoginAdminFormSchema),
         defaultValues: {
             email: "",
-            password: "",
         },
     });
 
     const onSubmit = async (values: LoginAdminFormSchemaType) => {
         try {
-            const res = await authClient.signIn.email({
+            const { data, error } = await authClient.signIn.magicLink({
                 email: values.email,
-                password: values.password,
+                callbackURL: "/login",
             });
 
-            if (res?.error) {
-                toast.error(
-                    ERROR_MESSAGES[
-                        res.error.code as keyof typeof ERROR_MESSAGES
-                    ],
-                    {
-                        position: "top-center",
-                        icon: <TriangleAlert className="size-4" />,
-                        duration: 3000,
-                    }
-                );
+            if (error) {
+                throw new Error(error.message);
             }
-            router.refresh();
+
+            if (data.status) {
+                toast.success("Un email vous a été envoyé pour vous connecter", {
+                    position: "top-center",
+                    icon: <CheckCircle className="size-4" />,
+                    duration: 3000,
+                });
+            }
+
         } catch (error) {
-            toast.error("Une erreur est survenue lors de la connexion", {
+            toast.error("Une erreur est survenue lors de l'envoi de l'email de connexion", {
                 position: "top-center",
                 icon: <TriangleAlert className="size-4" />,
                 duration: 3000,
@@ -110,23 +98,6 @@ export default function LoginForm({
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Mot de passe</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="password"
-                                            placeholder="********"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
                         <Button
                             type="submit"
                             className={cn(
@@ -138,10 +109,10 @@ export default function LoginForm({
                             {form.formState.isSubmitting ? (
                                 <>
                                     <Loader2 className="size-4 mr-2 animate-spin" />
-                                    Connexion en cours...
+                                    Envoi de l'email en cours...
                                 </>
                             ) : (
-                                "Se connecter"
+                                "Envoyer l'email de connexion"
                             )}
                         </Button>
                     </div>
