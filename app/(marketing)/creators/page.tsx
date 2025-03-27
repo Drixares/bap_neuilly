@@ -9,7 +9,7 @@ import Info from '../_components/infos';
 
 export default function Home() {
   return (
-    <div>
+    <div className="font-poster">
       <Header />
 
       <main>

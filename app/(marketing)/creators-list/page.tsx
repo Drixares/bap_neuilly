@@ -15,6 +15,8 @@ export default function Home() {
     const [creators, setCreators] = useState<Creator[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [currentCreators, setCurrentCreators] = useState<Creator[]>([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredCreators, setFilteredCreators] = useState<Creator[]>([]);
     const itemsPerPage = 16;
     
     useEffect(() => {
@@ -33,6 +35,29 @@ export default function Home() {
         
         fetchData();
     }, []);
+
+    useEffect(() => {
+        if (!searchTerm.trim()) {
+            setFilteredCreators(creators);
+        } else {
+            const filtered = creators.filter(creator => 
+                creator.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (creator.businessInfo?.companyName || '').toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setFilteredCreators(filtered);
+        }
+    }, [searchTerm, creators]);
+
+    useEffect(() => {
+        const indexOfLastItem = currentPage * itemsPerPage;
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+        setCurrentCreators(filteredCreators.slice(indexOfFirstItem, indexOfLastItem));
+        if (searchTerm && currentPage !== 1) setCurrentPage(1);
+    }, [currentPage, filteredCreators, itemsPerPage, searchTerm]);
+
+    const handleSearch = (term: string) => {
+        setSearchTerm(term);
+    };
     
     useEffect(() => {
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -58,7 +83,7 @@ export default function Home() {
                     </div>
                     <DecorativeElements/>
                     <div className='flex justify-between py-16'>
-                        <SearchModal />
+                        <SearchModal onSearch={handleSearch} searchTerm={searchTerm}/>
                         <div className='flex flex-wrap w-[80%] gap-8 justify-center '>
                             <CreatorList creator={currentCreators} />
                         </div>

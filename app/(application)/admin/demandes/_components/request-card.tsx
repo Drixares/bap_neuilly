@@ -61,9 +61,7 @@ export function RequestCard({ request }: RequestCardProps) {
                         {request.user.businessInfo?.phone && (
                             <p className="text-xs text-muted-foreground">
                                 Tél:{" "}
-                                {formatPhoneNumber(
-                                    "0" + request.user.businessInfo.phone
-                                )}
+                                {formatPhoneNumber(request.user.businessInfo.phone)}
                             </p>
                         )}
                     </div>

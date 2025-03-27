@@ -3,7 +3,7 @@ import {
     getCreatorById,
     getCreatorIdByEmail,
     getCreatorsWithBusinessInfo,
-    updateCreatorAndBusinessInfo,
+    updateCreatorAndBusinessInfo
 } from "@/data-access/creators";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";

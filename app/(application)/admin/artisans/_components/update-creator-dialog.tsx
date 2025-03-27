@@ -226,7 +226,7 @@ function ContactInfo({
             {form.watch("phone") && (
                 <div className="flex items-center gap-2 text-sm">
                     <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <span>{formatPhoneNumber("0" + form.watch("phone"))}</span>
+                    <span>{formatPhoneNumber(form.watch("phone"))}</span>
                 </div>
             )}
 

@@ -2,7 +2,7 @@ import "server-only";
 
 import { db } from "@/db";
 import { BusinessInfo, businessInfo, User, user } from "@/db/schema";
-import { eq, inArray } from "drizzle-orm";
+import { desc, eq, inArray } from "drizzle-orm";
 
 export async function getCreators() {
     const creators = await db.select().from(user).where(eq(user.role, "user"));
@@ -28,6 +28,7 @@ export async function getCreatorsWithBusinessInfo() {
             businessInfo: businessInfo,
         })
         .from(user)
+        .orderBy(desc(user.createdAt))
         .leftJoin(businessInfo, eq(user.id, businessInfo.userId))
         .where(eq(user.role, "user"));
 
@@ -68,13 +69,13 @@ export const updateCreatorAndBusinessInfo = async (
     id: string,
     data: Partial<User & BusinessInfo>
 ) => {
-    const { companyName, businessDescription, siretNum, ...rest } = data;
+    const { companyName, businessDescription, siretNum, phone, ...rest } = data;
 
     try {
         await db.update(user).set(rest).where(eq(user.id, id));
         await db
             .update(businessInfo)
-            .set({ companyName, businessDescription, siretNum })
+            .set({ companyName, businessDescription, siretNum, phone })
             .where(eq(businessInfo.userId, id));
 
         return true;
