@@ -1,6 +1,5 @@
 "use client";
 
-import { CTAButton } from './cta-button';
 import { DecorativeElements } from './decorative-elements';
 
 interface BannerContentProps {
@@ -38,12 +37,7 @@ export default function Home() {
         date="du 29 au 3O novembre"
       />
 
-      {/* Call to Action */}
-      <div>
-        <CTAButton href="#">
-          inscrivez-vous dès maintenant !
-        </CTAButton>
-      </div>
+      
     </section>
   );
 }
